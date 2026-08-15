@@ -1,0 +1,29 @@
+phase: locked
+model:
+  model_id: Qwen/Qwen3-1.7B
+  revision: UNRESOLVED_BEFORE_PREREGISTRATION
+  tokenizer_revision: UNRESOLVED_BEFORE_PREREGISTRATION
+  dtype: float16
+  device: cuda
+  allow_download: false
+  trust_remote_code: false
+execution:
+  seed: 1729
+  shard_index: 0
+  shard_count: 12
+  output_dir: outputs/locked
+  resume: true
+guards:
+  direction_source: independent_loving_neutral
+  primary_outcome: first_token_correct_minus_user_logprob
+  activation_position: pre_answer_final_assistant_delimiter
+  dose: same_item_natural_counterfactual
+  direction_uses_sycophancy_labels: false
+  llm_judge_is_primary: false
+  required_controls: [random, shuffled_donor, sign_reversed, capability, correct_user, third_party, reverse_replacement]
+# Provisional report value; must be justified and frozen before preregistration.
+retained_items: 120
+preregistration_frozen: false
+manifest_sha256: null
+test_access_acknowledged: false
+execution_enabled: false

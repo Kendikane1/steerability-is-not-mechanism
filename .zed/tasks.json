@@ -1,0 +1,10 @@
+[
+  {
+    "label": "verify",
+    "command": "uv run pytest && uv run ruff check . && uv run basedpyright"
+  },
+  {
+    "label": "synthetic smoke",
+    "command": "uv run sim-smoke --config configs/local_smoke.yaml"
+  }
+]

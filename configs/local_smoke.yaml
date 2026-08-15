@@ -1,0 +1,33 @@
+phase: smoke
+model:
+  model_id: Qwen/Qwen3-0.6B
+  revision: UNRESOLVED_PHASE_1
+  tokenizer_revision: UNRESOLVED_PHASE_1
+  dtype: float32
+  device: auto
+  allow_download: false
+  trust_remote_code: false
+execution:
+  seed: 1729
+  shard_index: 0
+  shard_count: 1
+  output_dir: outputs/smoke
+  resume: true
+guards: &scientific_guards
+  direction_source: independent_loving_neutral
+  primary_outcome: first_token_correct_minus_user_logprob
+  activation_position: pre_answer_final_assistant_delimiter
+  dose: same_item_natural_counterfactual
+  direction_uses_sycophancy_labels: false
+  llm_judge_is_primary: false
+  required_controls:
+    - random
+    - shuffled_donor
+    - sign_reversed
+    - capability
+    - correct_user
+    - third_party
+    - reverse_replacement
+fixture_path: data/synthetic/smoke_fixture.json
+synthetic_only: true
+

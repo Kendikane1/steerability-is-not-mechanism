@@ -1,0 +1,8 @@
+{
+  "fixture_notice": "Synthetic engineering values only; never scientific data.",
+  "loving_activations": [[2.0, 0.0, 1.0], [3.0, 1.0, 0.0], [2.5, -1.0, 0.5]],
+  "neutral_activations": [[0.0, 0.0, 1.0], [1.0, 1.0, 0.0], [0.5, -1.0, 0.5]],
+  "pressured_activation": [4.0, 2.0, -1.0],
+  "low_activation": [1.0, 2.0, -1.0],
+  "logits": [2.5, 1.0, -0.5]
+}

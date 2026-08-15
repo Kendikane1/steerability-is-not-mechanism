@@ -1,0 +1,25 @@
+.venv/
+.env
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.ipynb_checkpoints/
+.DS_Store
+
+# Generated research material and model artefacts
+data/*
+!data/.gitkeep
+!data/synthetic/
+outputs/*
+!outputs/.gitkeep
+artifacts/
+checkpoints/
+models/
+*.safetensors
+*.bin
+*.pt
+*.pth
+
