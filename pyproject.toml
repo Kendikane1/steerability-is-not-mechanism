@@ -52,5 +52,17 @@ addopts = "-ra"
 
 [tool.basedpyright]
 typeCheckingMode = "standard"
+# Generated notebooks in ignored outputs/ are not reusable project implementation.
+include = ["src", "tests"]
 venvPath = "."
 venv = ".venv"
+
+# Native Windows GPU builds; macOS and other platforms retain their existing index.
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu130", marker = "sys_platform == 'win32'" }]
+torchvision = [{ index = "pytorch-cu130", marker = "sys_platform == 'win32'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true

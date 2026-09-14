@@ -19,6 +19,22 @@
 
 ## Open before Phase 1 engineering
 
+### Infrastructure decisions recorded 2026-09-14
+
+- Native Windows is the current remote environment; no WSL, Docker, or full CUDA toolkit is
+  required by the installed setup. This is infrastructure, not selection of a scientific model.
+- Adopt the Windows agent's platform-marked CUDA PyTorch source and exact lockfile, retaining
+  the Mac source and original public release versions. Use Python 3.12 and locked sync.
+- Jupyter remains authenticated and loopback-only, reached through the existing SSH tunnel.
+  On-demand Limited/S4U scheduled tasks provide process independence from the launch terminal.
+- A standalone clone uses the bundled parent-standard snapshot if its parent file is absent.
+- See `REMOTE_COMPUTE.md` for evidence and limits. GPU arithmetic and connectivity do not
+  establish FP16 model headroom, deterministic model hooks, or scientific-job resume.
+- Full clean-machine infrastructure recreation, private backup, Tailscale expiry/recovery,
+  Windows update/power scheduling, and storage expansion remain operational follow-ups.
+
+### Engineering choices still open
+
 - Exact Qwen3-0.6B model and tokenizer revisions, license record, chat template, non-thinking
   setting, dtype on MPS/CPU, and deterministic-kernel tolerance.
 - Exact first-decision token representation (`A`/`B`, whitespace behavior, and proof that each
@@ -69,4 +85,3 @@
   model-family sweeps before the core result, or Colab as required infrastructure.
 - Claims about feelings/consciousness, universal sycophancy mechanisms, uniqueness/necessity,
   frontier-model generalization, or a precise fraction mediated.
-

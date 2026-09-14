@@ -28,6 +28,11 @@ uv run sim-smoke --config configs/local_smoke.yaml
 The last command is a deterministic synthetic smoke test. It loads no model and writes no
 scientific result.
 
+The shared lock selects CUDA-enabled PyTorch on native Windows and preserves the Mac package
+source. Use `uv sync --locked` for subsequent reproduction without changing the lock.
+For the existing remote PC, see [the operating and recovery guide](docs/REMOTE_COMPUTE.md).
+Its infrastructure tests are complete; model-backed research engineering has not started.
+
 ## Hardware roles
 
 - Apple Silicon M1: Qwen3-0.6B engineering and public reproducibility smoke tests, preferring

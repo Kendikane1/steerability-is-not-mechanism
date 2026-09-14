@@ -8,6 +8,7 @@ __pycache__/
 htmlcov/
 .ipynb_checkpoints/
 .DS_Store
+/tmp/pdfs/
 
 # Generated research material and model artefacts
 data/*
@@ -22,4 +23,3 @@ models/
 *.bin
 *.pt
 *.pth
-

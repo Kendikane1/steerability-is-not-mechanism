@@ -1,7 +1,10 @@
 # Project instructions
 
-Read the parent `../PROJECT_STANDARD.md` and this file completely before work. The parent
-standard governs environment, layout, reproducibility, and verification; this file governs
+Read the parent `../PROJECT_STANDARD.md` and this file completely before work. If the parent
+is absent in a standalone clone, read `docs/PROJECT_STANDARD.md` completely instead; it is the
+verbatim parent-standard snapshot captured on 2026-09-14. Do not create or overwrite a shared
+parent file automatically. Refresh the snapshot explicitly if the parent standard changes.
+The standard governs environment, layout, reproducibility, and verification; this file governs
 scientific scope. If they conflict within this repository, preserve the stricter scientific
 constraint here.
 
@@ -41,6 +44,9 @@ task regime.
   scientific pilot to pass. Colab is optional replication capacity, never a core dependency.
 - Do not download weights, access remote compute, create confirmatory data, or run scientific
   experiments during Phase 0.
+- The user separately authorized remote infrastructure setup and synthetic connectivity/GPU
+  checks in September 2026. This narrow exception does not authorize model downloads, real
+  data, scientific execution, or weakening any pilot/locked guard.
 - Long jobs must be deterministic, resumable, manifest-driven, and split into independently
   verifiable shards. Never store secrets in Git.
 - Synthetic fixtures may test engineering. They must be visibly marked synthetic and can never
@@ -48,8 +54,12 @@ task regime.
 
 ## Required workflow
 
+For remote-environment operation or troubleshooting, read `docs/REMOTE_COMPUTE.md` first.
+It records the Mac/Windows layout, tested capabilities, safe recovery steps, and untested limits.
+Do not treat historical reports as live machine state or assume local uncommitted changes are
+already on GitHub. Request only sanitized diagnostics; never request tokens or private keys.
+
 Before pilot or locked execution, resolve the applicable items in `docs/DECISIONS.md`. Locked
 execution additionally requires a frozen preregistration, immutable manifest hashes, a clean
 verification run, and an explicit human action changing the locked config from draft to
 executable. Never weaken a guard merely to make a run proceed.
-
