@@ -1,7 +1,7 @@
 # Local measurement contract — p1-local-v1
 
-Status: specified; one synthetic model scoring pass verified (P1-013). Capture/replacement and
-repeatability remain unverified on Qwen. This engineering protocol consolidates P1-005 through
+Status: specified; one synthetic model scoring pass verified (P1-013). P1-014 also verifies capture/identity and within-process
+repeatability for that prompt. P1-015 verifies paired/reverse edits for two synthetic directions. This engineering protocol consolidates P1-005 through
 P1-008; it is not a scientific freeze or execution authorization. Source of current choices:
 `DECISIONS.md`. Machine-readable settings: `configs/local_model_engineering.yaml`, validated
 by `load_engineering_config` in `engineering_config.py`. All fields are required; unknown fields,
@@ -103,3 +103,24 @@ probabilities were 0.9097180193 / 0.0888515165; correct-minus-endorsed margin wa
 with zero discrepancy across three arithmetic calculations. Actual MPS driver allocation after
 forward was 3,416,932,352 bytes; this is not peak memory or proof of long-run headroom.
 No causal edit, pressure comparison, lovingness direction or scientific effect was measured.
+
+
+P1-014 adds a distinct six-pass request (`configs/local_noop.yaml`) and bounded audit
+(`noop_check.py`, `notebooks/run_local_noop.py`). Three baselines, capture-only, captured-clone
+identity replacement, and post-hook baseline yielded exactly identical full-vocabulary logits.
+Captured activation vectors (1024 float32 values) matched exactly between capture and identity
+passes; all temporary hooks were removed. The existing numerical bounds were unchanged.
+Raw arrays and independent NumPy checks are recorded in the research log. This validates the
+no-change path for one prompt/site in one process; zero-dose coordinate math and nonzero
+paired/reverse edits on Qwen are the next checks. Scientific/resume gates remain outstanding.
+
+
+P1-015 extends observation telemetry with the actual float32 applied vector and exact equality
+of other token positions at the hook output. The separate18-call coordinate request uses the
+original prompt plus its correction-welcoming counterpart and fixed axis0/alternating directions.
+Reference NumPy float64 edits are cast to float32 before application. Geometry is checked on the
+actual hook output; no-change scores, repeated captures and hook cleanup are also verified.
+All18 passes and an independent saved-array audit passed. Axis geometry was exact; dense
+projection/orthogonal rounding errors were below the predeclared scaled bound. This tests
+engineering wiring, not independently estimated lovingness, a pressure phenotype or controls.
+See `COORDINATE_ENGINEERING_WALKTHROUGH.md` for code explanations and measured score changes.

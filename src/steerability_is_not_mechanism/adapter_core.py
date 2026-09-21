@@ -63,6 +63,8 @@ class AdapterLayout:
 class ForwardObservation:
     logits: torch.Tensor
     activation: torch.Tensor | None
+    applied_replacement: torch.Tensor | None = None
+    unedited_positions_exact: bool | None = None
 
 
 class SinglePromptAdapterCore:
@@ -216,9 +218,11 @@ class SinglePromptAdapterCore:
             sequence_length = input_ids.shape[1]
             count = 0
             captured: torch.Tensor | None = None
+            applied: torch.Tensor | None = None
+            unedited_exact: bool | None = None
 
             def hook(_module: nn.Module, _args: tuple[object, ...], output: object):
-                nonlocal count, captured
+                nonlocal count, captured, applied, unedited_exact
                 count += 1
                 if count != 1:
                     raise RuntimeError("capture block invoked more than once")
@@ -230,6 +234,8 @@ class SinglePromptAdapterCore:
                     return None
                 edited = tensor.clone()
                 edited[0, -1, :] = replacement
+                applied = edited[0, -1, :].detach().clone()
+                unedited_exact = torch.equal(edited[:, :-1, :], tensor[:, :-1, :])
                 return edited
 
             handle = self.block.register_forward_hook(hook) if site is not None else None
@@ -242,7 +248,9 @@ class SinglePromptAdapterCore:
                     (1, sequence_length, self.layout.vocabulary_size),
                     "logits",
                 )
-                return ForwardObservation(logits[0, -1, :].detach().clone(), captured)
+                return ForwardObservation(
+                    logits[0, -1, :].detach().clone(), captured, applied, unedited_exact
+                )
             finally:
                 if handle is not None:
                     handle.remove()

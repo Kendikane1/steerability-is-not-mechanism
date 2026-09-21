@@ -550,6 +550,117 @@ test material here.
   capture/replacement, repeatability and shard/resume are still pending. No remote access,
   new download, scientific data, commit or push. Updated current documentation accordingly.
 
+## 2026-09-21 / P1-014 / Capture and identity check — prediction
+
+- User explicitly requested commit/push of completed work, then immediate next step. Committed
+  P1-005–P1-013 code/config/docs as `bd7c705` and pushed `main` to origin successfully. Source
+  hashes matched the last tested P1-013 receipt; fresh whitespace check passed. Weights and raw
+  generated outputs remain ignored. Earlier 104-test/model results are historical, not rerun.
+- Question: do repeated unhooked scores, capture-only and cloned identity replacement preserve
+  full logits at the recorded Qwen site? Prediction: exact equality; still report any nonzero
+  discrepancy even within the existing P1-007 bounds (element atol/rtol 1e-5, margin atol 1e-4).
+- Smallest check: same original synthetic prompt, three baselines, capture-only, replacement
+  with captured clone, post-hook baseline (six forward attempts maximum). Verify hooks removed
+  after each call, activation shape 1024, finite output and repeated captured-vector agreement.
+  No directions, changed coordinates, new prompts, scientific data or generation in this step.
+- Keep pinned protocol and P1-013 one-forward request unchanged. Add a separate literal-scoped
+  no-op request/runner, sharing verified offline construction. Same float32/eager/strict MPS,
+  seed1729, threads1 and sequential loading. Retain the recorded pre-load capacity rule. Stop on
+  a failed comparison; save partial outputs/errors, never relax checks or automatically retry.
+- Source/config hashes, command, runtime and output identities will be retained in the run
+  directory; no scientific split or shard applies. Next after success: coordinate/reverse checks,
+  not scientific inference. Outcomes follow below.
+
+- Before model execution: locked offline sync, 111 tests (9.86s), Ruff lint/format (43 files),
+  basedpyright (zero errors/warnings/notes), synthetic smoke and whitespace check passed.
+  Commands/outcomes/source hashes retained in `outputs/phase1/p1-014/verification.json`.
+  No new model result yet.
+
+- Outcome: `mps-01` PASSED, exit0, 2026-09-21 15:46:19–15:47:09 UTC. Six forwards, no
+  generated tokens, `mps:0` float32, same pinned weights/template/protocol; all48 input IDs match
+  P1-005. All151936 logit elements exactly equal across every pass; max absolute error0 and
+  margin error0. A-minus-B margin2.3261680603027344. Capture and identity pre-edit activations
+  are finite float32 shape[1024], exactly equal. Hooks absent after every pass. No failures.
+- Artifacts: `outputs/phase1/p1-014/mps-01/` retains six logits arrays, two activation arrays,
+  and `run.json` (SHA-256 `1c52780ada75e2c82f0a056ed44641073e537f676f92a6f8e7500b03a0d92305`).
+  Each array has a manifest hash. Independent post-run NumPy loading verified hashes, shapes,
+  dtypes/finiteness and exact full-array/activation equality without another model forward.
+  Exact launch command/exit0/console and verification identities are in `execution_receipt.json`
+  (SHA-256 `8fab654b958ffe48e0d9fd4f0ab560e49d39391c95e4120006a3b48672605b02`).
+- Post-run MPS tensors2,384,200,704 bytes, driver3,416,932,352 bytes; not peak or long-run headroom.
+  Within-process no-change checks passed for this one prompt/site. This is model-backed
+  engineering evidence, not causal/direction/scientific evidence or a cross-process guarantee.
+- Stop after this bounded part of milestone3. Next: zero-coordinate-difference and paired
+  natural-coordinate/reverse replacement with visibly synthetic directions, including projection
+  and orthogonal-remainder checks. No scientific layer/direction choice made. Earlier work is
+  published as `bd7c705`; this new P1-014 implementation and documentation remain local/uncommitted.
+
+## 2026-09-21 / P1-015 / Paired coordinate replacement — before execution
+
+- Authority: user requested the next bounded step, then commit/push findings and a detailed
+  walkthrough. Include the still-uncommitted P1-014 work. No scientific execution or new download.
+- Question/prediction: can actual Qwen float32 activations receive the paired natural coordinate
+  in both directions while preserving the orthogonal remainder and other token positions? Expect
+  geometry within existing scaled1e-5 bound and zero-dose scores unchanged within P1-007 limits.
+  No prediction or acceptance criterion for score direction, size, or which option wins.
+- Fixed synthetic prompt pair: original pressured prompt; low-pressure counterpart changes only
+  `Please agree with me.` to `Please correct me if I am wrong.` Both keep the same false user
+  claim, question, option order and response instruction. This is engineering material only;
+  it does not freeze scientific wording. Token lengths and new low-prompt boundary are unverified.
+- Preselected synthetic unit directions: axis e0; dense alternating +1/-1 divided by sqrt(width).
+  No direction is selected from observed effects; neither is a lovingness estimate/random control.
+- Exactly18 maximum forwards: three unhooked baselines plus capture per prompt (8); zero-dose
+  and paired replacement in both contexts for each direction (8); post-edit baseline per prompt
+  (2). Same pinned protocol/site13/MPS float32/eager/seed1729/threads1 and sequential offline load.
+- Construct edits using existing NumPy float64 reference functions, cast to float32 for actual
+  application. Audit the vector actually returned by the hook: donor projection, orthogonal
+  remainder, exact other-position equality, repeated pre-edit capture, and hook cleanup. Save
+  actual applied vectors, not just proposed edits. Stop on failure without tolerance changes.
+- No scientific split/shard applies. Retain code/config/artifact hashes and all failures. This
+  step tests local intervention wiring; shard/resume and scientific validation remain later work.
+
+- Pre-execution verification: 119 tests passed in5.87s; locked offline sync, Ruff lint/format
+  (46 files), basedpyright and synthetic smoke passed. Initial lint found semicolon formatting
+  in new tests; formatter corrected it before the clean check. No model was used for this fix.
+  Verification commands/results/source hashes: `outputs/phase1/p1-015/verification.json`.
+
+- Outcome: `mps-01` PASSED, exit0, 2026-09-21 15:55:49–15:56:15 UTC; 18 forwards, zero
+  generated tokens. Actual input lengths high48/low51; both final tokens271 (indices47/50).
+  Each prompt passed bare-A/B prefix, round-trip and template checks. No assumed equal length.
+- Three baselines, capture-only, zero-dose for both directions, and post-edit baselines were
+  exactly equal within context (all151936 logits, margin error0). Every pre-edit captured vector
+  matched its context's capture exactly. Actual applied vectors matched requested float32 edits;
+  other token positions exactly unchanged and all temporary hooks removed.
+- Axis0 coordinates: high1.1148312091827393, low1.133813738822937. Both swaps had zero
+  projection/orthogonal errors. Dense coordinates: high-1.1611821979167871,
+  low-1.2695355840260163; max projection error3.0484170565614477e-7, max orthogonal
+  error8.118697319383999e-7, below applicable bounds about4.32e-4 to4.36e-4. No limit changed.
+- Descriptive margins: high baseline2.3261680603027344; low baseline2.1779613494873047.
+  Axis high←low2.3252620697021484 (delta-0.0009059906005859375);
+  axis low←high2.1790237426757812 (delta+0.0010623931884765625).
+  Dense high←low2.3174362182617188 (delta-0.008731842041015625);
+  dense low←high2.182567596435547 (delta+0.0046062469482421875).
+  A remains preferred to B throughout. High baseline exceeds low by0.1482067108154297;
+  this pair does NOT demonstrate the hypothesized pressure-induced sycophancy phenotype.
+  No prompts/directions were adjusted to obtain a desired result.
+- Evidence: `outputs/phase1/p1-015/mps-01/run.json`, SHA-256
+  `5febc9a606bb03eccc9668a55fc8d38f9b7d0144ed7a1b5f43a6e67d6014610a`, contains code/config
+  hashes, actual token IDs/renderings, runtime settings, comparisons and array hashes. An
+  independent NumPy-only audit loaded every array, verified hashes/finiteness, repeated geometry
+  using orthogonal change rather than subtracting two remainders, checked score identities and
+  exact no-change comparisons. Passed with no new model calls. Driver/report/launch receipts
+  retained alongside the run. Execution receipt SHA-256
+  `90f3feafaa2df49d50682e9fe10e207aaeafbfaefd3ab1caf4aaf83f6816bc14`.
+  Post-run MPS driver3,425,337,344 bytes; not peak/long-run headroom.
+- Interpretation: paired natural-coordinate and reverse wiring passes for one synthetic item,
+  two fixed synthetic directions and one engineering site. Observed score shifts are descriptive;
+  no lovingness direction, scientific control set or selective mechanism has been tested. Saved
+  hook telemetry establishes local other-position preservation; synthetic tests cover failure
+  cleanup and deliberate corruption. Milestone3's bounded local checks now have evidence.
+- Next: deterministic shard/interruption-resume engineering (milestone4), followed by the full
+  engineering review. Stop here for the requested teaching walkthrough. User authorized publishing
+  P1-014/P1-015 code and documented findings; raw arrays/weights remain ignored local artifacts.
+
 ## Entry template
 
 - ID / date / phase / status:

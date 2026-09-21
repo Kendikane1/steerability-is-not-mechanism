@@ -46,13 +46,14 @@
 
 ### Engineering choices still open
 
-- Implement and verify P1-007's initial float32/device/numerical protocol. Model-backed memory
-  headroom and observed repeatability remain unknown.
+- P1-013 verified one float32 MPS scoring pass. Sustained memory headroom remains unknown;
+  P1-014 passed within-process repeatability and capture/identity checks for one prompt/site.
 - Generalize the P1-005 token-boundary assertions to the eventual adapter and all engineering
-  prompts; model-backed first-token scoring remains unverified.
-- Implement and verify P1-006's block-output convention at P1-007's engineering block index.
-- Implement and verify the P1-008 adapter contract for activation replacement during a single
-  next-token forward pass, including shape/device/dtype validation and failure handling.
+  prompts; one synthetic prompt passed model-backed first-token scoring in P1-013.
+- P1-014 verified capture and identity at the selected block-output site. Nonzero coordinate
+  replacement and reverse replacement passed on the P1-015 synthetic pair/directions.
+- P1-015 verifies bounded Qwen coordinate/reverse replacement; scientific generalization and
+  long-job guarantees remain unestablished. Failure cleanup is also covered by synthetic tests.
 - Phase 1 shard size, checkpoint format, resume semantics, activation tolerance, and storage
   budget.
 
@@ -250,6 +251,47 @@
   not a proven library root cause. Supply `GenerationConfig.from_model_config(config)` to prevent
   an unnecessary generation-file lookup; direct scoring never uses generation. Select MPS as
   explicit `mps:0` so strict device comparisons match actual tensor device identities.
+
+### P1-014 / Bounded capture and identity audit, 2026-09-21
+
+- Continue the approved Phase 1 engineering sequence after publishing `bd7c705` at the user's
+  request. Add `configs/local_noop.yaml` with distinct literal scope and exactly six maximum
+  forward calls: three baselines, capture, identity replacement, post-hook baseline.
+- Share artifact verification/construction through a private loader helper; keep the existing
+  single-item request at one call and reject crossing request schemas. General/scientific loader
+  guards and the frozen engineering specification are unchanged. Sequential loading is required.
+- Use the same original synthetic prompt and site13, compare every logit and A/B margin against
+  baseline1 using existing P1-007 limits. Compare pre-edit captures across capture/identity calls.
+  Preserve raw vectors, exact equality, maximum absolute errors and per-call hook cleanup.
+  Stop at first discrepancy outside tolerance, retaining partial evidence. No altered coordinate
+  or direction is introduced. Zero-dose coordinate math and bidirectional edits are later checks.
+- Outcome: all six passes and captured vectors matched exactly; max logit/activation/margin
+  discrepancies were zero. Hooks removed after every call; details/artifacts in the research log.
+- Scope of a pass is this prompt/site/device/environment within one process. It does not establish
+  cross-process, cross-device or scientific reproducibility, nor a lovingness-related mechanism.
+
+### P1-015 / Synthetic coordinate and reverse audit, 2026-09-21
+
+- Add distinct `synthetic_paired_coordinate_v1` request, max18 calls, fixed original prompt and
+  counterpart `Please correct me if I am wrong.`. Shared verified artifacts; no general or
+  scientific guards relaxed, no changes to earlier request scopes or frozen protocol.
+- Preselect axis0 and unit alternating-sign dense directions, independent of all measured
+  outcomes. These are engineering fixtures, not lovingness estimates or matched-random controls.
+- Use existing NumPy float64 reference coordinate math and actual float32 device replacements.
+  Extend observation records to expose the actual applied vector and exact equality of unedited
+  token positions. Verify donor projection and orthogonal preservation against P1-007 limits.
+- Three baselines and capture per context; zero-dose and counterpart-coordinate swaps in both
+  contexts for each direction; final baseline per context. Require no-change scores within
+  existing bounds, pre-edit activation repeatability, clean hooks and valid geometry. Score
+  direction/magnitude is descriptive only. No scientific phenotype or mechanism claim follows.
+
+- Outcome: all18 passes and saved-array audit passed. No-change scores/captures were exactly
+  equal. Axis geometry exact; dense rounding error below predeclared bounds. This synthetic pair
+  did not show the intended pressure-lowers-correctness pattern. Do not revise it to force one;
+  scientific phenotype validation belongs to a separately designed pilot.
+- Keep float64 reference construction followed by float32 application for this engineering
+  implementation; a device-native coordinate constructor is not yet implemented or verified.
+  Next bounded step is shard/resume engineering, not scientific execution.
 
 ## Must resolve before the scientific pilot
 

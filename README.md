@@ -8,14 +8,16 @@ natural counterfactual value in both directions.
 
 ## Status
 
-**Phase 1: first synthetic Qwen scoring pass completed on local MPS.** Phase 0 initialization
+**Phase 1: synthetic scoring, capture, and bidirectional coordinate checks passed on local MPS.** Phase 0 initialization
 and experimental specification are complete. This repository currently contains
 typed configs, modular interfaces, mathematical primitives, synthetic fixtures, and tests. It
 contains no real pilot/confirmatory data or scientific results. The pinned Qwen3-0.6B weights
 were downloaded with explicit permission and checksum-verified on 2026-09-17 in the ignored
 local `models/` directory and are not part of Git. P1-013 verified the 48-token synthetic input
-and one full-vocabulary scoring pass in float32. Capture/replacement and repeatability on Qwen
-remain unverified. This is engineering evidence only.
+and one full-vocabulary scoring pass in float32. P1-014 verified within-process repeats, capture
+and identical-copy replacement with exact equality. P1-015 verified zero-dose and paired/reverse
+coordinate replacements for two fixed synthetic directions. This is engineering evidence only;
+shard/resume checks remain next.
 
 Our stepwise method is in [RESEARCH_WORKFLOW.md](docs/RESEARCH_WORKFLOW.md), with substantive
 steps recorded in [RESEARCH_LOG.md](docs/RESEARCH_LOG.md). Downloads remain separately gated.
@@ -81,7 +83,7 @@ execution; the command above still runs the original weight-free synthetic smoke
 
 The shared adapter core now has synthetic CPU tests for capture, replacement and hook cleanup.
 It loads no weights. The separate verified offline Qwen factory passed one scoring check;
-model-backed activation capture, replacement and repeatability are the next bounded step.
+the no-op and paired-coordinate audits also passed. Deterministic shard/resume is next.
 
 To reproduce the one-item engineering check in a fresh process, choose an unused output directory:
 
@@ -93,3 +95,16 @@ HF_DEACTIVATE_ASYNC_LOAD=1 uv run --locked --offline python notebooks/run_local_
 
 This requires the verified local tokenizer bundle and weights recorded in the research log.
 It performs one forward pass, with no generation or interventions, and refuses to overwrite outputs.
+
+
+The bounded capture/identity audit uses `configs/local_noop.yaml` and
+`notebooks/run_local_noop.py` with the same offline/sequential-loading environment and an unused
+output directory. It allows six passes of the original synthetic prompt and stops on a failed
+comparison. P1-014 in the research log records results and artifact identities.
+
+
+The paired-coordinate audit uses `configs/local_coordinate.yaml` and
+`notebooks/run_local_coordinate.py` with the same offline/sequential-loading environment.
+It permits18 passes on a fixed synthetic pair and checks actual applied-vector geometry.
+See the [detailed code and results walkthrough](docs/COORDINATE_ENGINEERING_WALKTHROUGH.md).
+These fixtures are not lovingness directions, and this pair did not establish a sycophancy effect.
