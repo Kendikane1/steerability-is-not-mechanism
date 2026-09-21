@@ -10,20 +10,37 @@ from .activations import ActivationSite
 
 
 class CausalLMAdapter(Protocol):
-    """Minimal contract required by the future experiment runner."""
+    """Single unpadded prompt contract; concrete model execution is still disabled.
+
+    See docs/LOCAL_ENGINEERING_PROTOCOL.md for required runtime validation and hook cleanup.
+    These method declarations do not implement those guarantees.
+    """
 
     @property
     def revision(self) -> str: ...
 
-    def encode_decision_prompt(self, prompt: str) -> torch.Tensor: ...
+    def encode_decision_prompt(self, prompt: str) -> torch.Tensor:
+        """Return int64 [1, sequence_length] IDs after template/prefix/option checks."""
+        ...
 
-    def first_token_logits(self, input_ids: torch.Tensor) -> torch.Tensor: ...
+    def first_token_logits(self, input_ids: torch.Tensor) -> torch.Tensor:
+        """Return finite float32 [vocabulary_size] logits at the final input position."""
+        ...
 
-    def capture(self, input_ids: torch.Tensor, site: ActivationSite) -> torch.Tensor: ...
+    def capture(self, input_ids: torch.Tensor, site: ActivationSite) -> torch.Tensor:
+        """Return a detached float32 [hidden_size] clone at the declared block output."""
+        ...
 
     def first_token_logits_with_replacement(
         self, input_ids: torch.Tensor, site: ActivationSite, replacement: torch.Tensor
-    ) -> torch.Tensor: ...
+    ) -> torch.Tensor:
+        """Accept a finite same-device/dtype [hidden_size] vector; return final logits.
+
+        The caller constructs the coordinate replacement. The adapter validates it, clones the
+        block output and replaces only the selected token. It never edits weights or leaves a
+        hook registered after the call, including when the forward pass raises.
+        """
+        ...
 
 
 class ModelLoadingDeferred(RuntimeError):

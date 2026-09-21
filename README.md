@@ -8,9 +8,17 @@ natural counterfactual value in both directions.
 
 ## Status
 
-**Phase 0: initialization and experimental specification.** This repository currently contains
+**Phase 1: first synthetic Qwen scoring pass completed on local MPS.** Phase 0 initialization
+and experimental specification are complete. This repository currently contains
 typed configs, modular interfaces, mathematical primitives, synthetic fixtures, and tests. It
-contains no model weights, real pilot/confirmatory data, or scientific results.
+contains no real pilot/confirmatory data or scientific results. The pinned Qwen3-0.6B weights
+were downloaded with explicit permission and checksum-verified on 2026-09-17 in the ignored
+local `models/` directory and are not part of Git. P1-013 verified the 48-token synthetic input
+and one full-vocabulary scoring pass in float32. Capture/replacement and repeatability on Qwen
+remain unverified. This is engineering evidence only.
+
+Our stepwise method is in [RESEARCH_WORKFLOW.md](docs/RESEARCH_WORKFLOW.md), with substantive
+steps recorded in [RESEARCH_LOG.md](docs/RESEARCH_LOG.md). Downloads remain separately gated.
 
 ## Setup and checks
 
@@ -31,7 +39,7 @@ scientific result.
 The shared lock selects CUDA-enabled PyTorch on native Windows and preserves the Mac package
 source. Use `uv sync --locked` for subsequent reproduction without changing the lock.
 For the existing remote PC, see [the operating and recovery guide](docs/REMOTE_COMPUTE.md).
-Its infrastructure tests are complete; model-backed research engineering has not started.
+Its infrastructure tests are complete; no remote model-backed research has started.
 
 ## Hardware roles
 
@@ -60,6 +68,28 @@ Recheck the weight-free baseline at any time with:
 uv run sim-smoke --config configs/local_smoke.yaml
 ```
 
-Phase 1 starts by resolving the model revision, chat template, first-token convention, and hook
-site in `docs/DECISIONS.md`. Model-backed execution is intentionally guarded until those choices
-are frozen and the small-model download is explicitly authorized.
+Phase 1 measurement choices and remaining runtime checks are recorded in `docs/DECISIONS.md`.
+The general model loader and scientific execution paths remain guarded. The separate
+`configs/local_single_item.yaml` authorizes only the original synthetic item through its offline
+runner. The approved weight download and first scoring check are complete.
+
+The initial local measurement specification is now recorded in
+[`configs/local_model_engineering.yaml`](configs/local_model_engineering.yaml), with its
+[adapter contract](docs/LOCAL_ENGINEERING_PROTOCOL.md). It pins the P1-005–P1-007 settings
+and rejects incomplete or incompatible declarations. This separate specification cannot enable
+execution; the command above still runs the original weight-free synthetic smoke test.
+
+The shared adapter core now has synthetic CPU tests for capture, replacement and hook cleanup.
+It loads no weights. The separate verified offline Qwen factory passed one scoring check;
+model-backed activation capture, replacement and repeatability are the next bounded step.
+
+To reproduce the one-item engineering check in a fresh process, choose an unused output directory:
+
+```sh
+HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 PYTORCH_ENABLE_MPS_FALLBACK=0 \
+HF_DEACTIVATE_ASYNC_LOAD=1 uv run --locked --offline python notebooks/run_local_single_item.py \
+  --run-dir outputs/phase1/single-item-reproduction-01
+```
+
+This requires the verified local tokenizer bundle and weights recorded in the research log.
+It performs one forward pass, with no generation or interventions, and refuses to overwrite outputs.

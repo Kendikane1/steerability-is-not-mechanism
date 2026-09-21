@@ -1,0 +1,59 @@
+# P1-005 through P1-008: engineering specification only; not a sim-smoke run config.
+protocol_id: p1-local-v1
+status: specified_unverified
+synthetic_only: true
+execution_enabled: false
+model:
+  model_id: Qwen/Qwen3-0.6B
+  revision: c1899de289a04d12100db370d81485cdf75e47ca
+  tokenizer_revision: c1899de289a04d12100db370d81485cdf75e47ca
+  dtype: float32
+  device: auto
+  device_order: mps_then_cpu_separate_run
+  allow_download: false
+  trust_remote_code: false
+input:
+  template_sha256: a55ee1b1660128b7098723e0abcd92caa0788061051c62d51cbe87d9cf1974d8
+  message_layout: single_user_no_system_no_tools
+  add_generation_prompt: true
+  enable_thinking: false
+  return_dict: false
+  add_special_tokens_on_rendered_text: false
+  option_a: A
+  option_b: B
+  option_a_id: 32
+  option_b_id: 33
+  batch_size: 1
+  padding: false
+site:
+  layer_index: 13
+  layer_count: 28
+  hidden_size: 1024
+  boundary: block_output_after_residual_additions_before_downstream_norm
+  indexing: zero_based
+  token_position: final_nonpadding_formatted_input_token
+runtime:
+  attention_implementation: eager
+  evaluation_mode: true
+  inference_mode: true
+  use_cache: false
+  sampling: false
+  compile: false
+  external_kernels: false
+  mixed_precision: false
+  deterministic_algorithms: true
+  warn_only: false
+  seed: 1729
+  cpu_intraop_threads: 1
+  cpu_interop_threads: 1
+checks:
+  baseline_repetitions: 3
+  element_atol: 0.00001
+  element_rtol: 0.00001
+  margin_atol: 0.0001
+  geometry_scaled_atol: 0.00001
+  reference_dtype: cpu_float64
+  comparison_scope: same_device_same_environment
+  require_finite: true
+  record_exact_equality: true
+  unedited_positions_exact: true

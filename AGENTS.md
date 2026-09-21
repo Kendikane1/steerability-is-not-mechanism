@@ -54,6 +54,12 @@ task regime.
 
 ## Required workflow
 
+For research work, read `docs/RESEARCH_WORKFLOW.md` and the latest `docs/RESEARCH_LOG.md`
+entries. Log substantive steps, predictions, commands/config identities, outcomes, deviations
+and next questions; record settled choices in `docs/DECISIONS.md`. Keep documentation concise,
+distinguish teaching examples from measured outputs, and preserve the user's stepwise learning
+pace. Never use rapid iteration to weaken split isolation or locked-test blinding.
+
 For remote-environment operation or troubleshooting, read `docs/REMOTE_COMPUTE.md` first.
 It records the Mac/Windows layout, tested capabilities, safe recovery steps, and untested limits.
 Do not treat historical reports as live machine state or assume local uncommitted changes are

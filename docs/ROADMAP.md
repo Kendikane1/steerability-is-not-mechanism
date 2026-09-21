@@ -1,5 +1,10 @@
 # Phase roadmap
 
+Status, 2026-09-17: Phase 1 milestones 1–2 have local engineering evidence: pinned input/runtime
+specification and one verified synthetic Qwen scoring pass on MPS (P1-013). Follow
+`RESEARCH_WORKFLOW.md` and `RESEARCH_LOG.md`. Next: milestone 3 model-backed capture/replacement
+and repeatability checks. Scientific choices remain open; no scientific execution has begun.
+
 | Phase | Scope | Exit condition |
 |---|---|---|
 | 0 — initialization | Specifications, typed configs, modular skeleton, synthetic fixtures/tests. No weights or scientific data. | Full local verification and synthetic smoke pass. |
