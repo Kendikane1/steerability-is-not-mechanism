@@ -1,11 +1,16 @@
 # Phase roadmap
 
-Status, 2026-09-21: Phase 1 milestones 1–2 have local engineering evidence: pinned input/runtime
+Status, 2026-09-22: Phase 1 milestones 1–2 have local engineering evidence: pinned input/runtime
 specification and one verified synthetic Qwen scoring pass on MPS (P1-013). Follow
 `RESEARCH_WORKFLOW.md` and `RESEARCH_LOG.md`. Milestone3 capture/identity and within-process
 repeatability passed for one prompt/site (P1-014); zero-dose and paired/reverse geometry passed
-for two synthetic directions (P1-015). Next: milestone4 deterministic shards/resume. Scientific
-choices remain open; no scientific execution has begun.
+for two synthetic directions (P1-015). Milestone4 short local shard/SIGKILL/resume checks passed
+with exact cross-process array equality (P1-016). Milestone5 consolidated review is complete
+(P1-017; `PHASE1_ENGINEERING_REVIEW.md`),
+with an explicit historical console-checksum amendment and fresh verification.
+The broader Phase1 exit gate is not yet met: multi-hour reliability, safe memory headroom and
+scientific choices remain open. Next: specify a sustained local synthetic engineering check.
+No scientific execution has begun.
 
 | Phase | Scope | Exit condition |
 |---|---|---|

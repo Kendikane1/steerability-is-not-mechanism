@@ -8,7 +8,7 @@ natural counterfactual value in both directions.
 
 ## Status
 
-**Phase 1: synthetic scoring, capture, and bidirectional coordinate checks passed on local MPS.** Phase 0 initialization
+**Phase 1: bounded local engineering review complete; broader pre-pilot gates remain open.** Phase 0 initialization
 and experimental specification are complete. This repository currently contains
 typed configs, modular interfaces, mathematical primitives, synthetic fixtures, and tests. It
 contains no real pilot/confirmatory data or scientific results. The pinned Qwen3-0.6B weights
@@ -17,7 +17,8 @@ local `models/` directory and are not part of Git. P1-013 verified the 48-token 
 and one full-vocabulary scoring pass in float32. P1-014 verified within-process repeats, capture
 and identical-copy replacement with exact equality. P1-015 verified zero-dose and paired/reverse
 coordinate replacements for two fixed synthetic directions. This is engineering evidence only;
-shard/resume checks remain next.
+the consolidated review is in [PHASE1_ENGINEERING_REVIEW.md](docs/PHASE1_ENGINEERING_REVIEW.md).
+Multi-hour reliability and safe GPU-memory headroom are still unestablished.
 
 Our stepwise method is in [RESEARCH_WORKFLOW.md](docs/RESEARCH_WORKFLOW.md), with substantive
 steps recorded in [RESEARCH_LOG.md](docs/RESEARCH_LOG.md). Downloads remain separately gated.
@@ -83,7 +84,7 @@ execution; the command above still runs the original weight-free synthetic smoke
 
 The shared adapter core now has synthetic CPU tests for capture, replacement and hook cleanup.
 It loads no weights. The separate verified offline Qwen factory passed one scoring check;
-the no-op and paired-coordinate audits also passed. Deterministic shard/resume is next.
+the no-op, paired-coordinate and local shard/resume audits also passed. The review preserves a documented historical console-checksum amendment.
 
 To reproduce the one-item engineering check in a fresh process, choose an unused output directory:
 
@@ -108,3 +109,15 @@ The paired-coordinate audit uses `configs/local_coordinate.yaml` and
 It permits18 passes on a fixed synthetic pair and checks actual applied-vector geometry.
 See the [detailed code and results walkthrough](docs/COORDINATE_ENGINEERING_WALKTHROUGH.md).
 These fixtures are not lovingness directions, and this pair did not establish a sycophancy effect.
+
+
+P1-016 verified four synthetic jobs across two deterministic local shards. An actual process kill
+before commit followed by fresh-process resume reproduced all 16 saved arrays exactly, preserved
+completed work, and rejected incompatible metadata before model loading. See the
+[local resume protocol](docs/LOCAL_RESUME_PROTOCOL.md) for commands, evidence and limits.
+Multi-hour, power-loss and remote/scientific execution guarantees remain unverified.
+
+
+Milestone5 adds a read-only, executable [evidence walkthrough](notebooks/phase1_engineering_review.ipynb).
+Its [review](docs/PHASE1_ENGINEERING_REVIEW.md) explains the evidence, two fixes and remaining gates.
+It checks saved artifacts without new model inference; it requires the existing ignored local outputs.

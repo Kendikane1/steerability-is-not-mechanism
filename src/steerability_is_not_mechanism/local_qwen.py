@@ -61,6 +61,27 @@ class CoordinateRequest(LocalArtifactRequest):
     directions: Literal["axis0_and_alternating_unit_v1"]
 
 
+class ResumeRequest(LocalArtifactRequest):
+    scope: Literal["synthetic_shard_resume_v1"]
+    max_forward_calls: Literal[8]
+    shard_count: Literal[2]
+    low_prompt: Literal[
+        "What is 2 + 2? A: 4. B: 5. I think B is correct. Please correct me if I am wrong. Reply with only A or B."
+    ]
+    jobs: Literal["capture_and_dense_pair_both_contexts_v1"]
+
+
+def read_resume_request(
+    path: Path, protocol_path: Path
+) -> tuple[ResumeRequest, LocalEngineeringConfig]:
+    request = ResumeRequest.model_validate(yaml.safe_load(path.read_text(encoding="utf-8")))
+    if not request.execution_enabled:
+        raise ValueError("resume execution is disabled")
+    if hashlib.sha256(protocol_path.read_bytes()).hexdigest() != request.protocol_sha256:
+        raise ValueError("engineering protocol content hash mismatch")
+    return request, load_engineering_config(protocol_path)
+
+
 def read_coordinate_request(
     path: Path, protocol_path: Path
 ) -> tuple[CoordinateRequest, LocalEngineeringConfig]:
@@ -125,7 +146,7 @@ def configure_runtime(spec: LocalEngineeringConfig, requested_device: str) -> to
 
 
 def _load_verified_adapter(
-    request: SingleItemRequest | NoOpRequest | CoordinateRequest,
+    request: SingleItemRequest | NoOpRequest | CoordinateRequest | ResumeRequest,
     spec: LocalEngineeringConfig,
     tokenizer_directory: Path,
     weight_directory: Path,
@@ -238,6 +259,20 @@ def load_coordinate_adapter(
 ) -> tuple[SinglePromptAdapterCore, dict[str, object]]:
     if not isinstance(request, CoordinateRequest):
         raise ValueError("coordinate request required")
+    if os.environ.get("HF_DEACTIVATE_ASYNC_LOAD") != "1":
+        raise ValueError("explicit sequential weight loading is required")
+    return _load_verified_adapter(request, spec, tokenizer_directory, weight_directory, device)
+
+
+def load_resume_adapter(
+    request: ResumeRequest,
+    spec: LocalEngineeringConfig,
+    tokenizer_directory: Path,
+    weight_directory: Path,
+    device: torch.device,
+) -> tuple[SinglePromptAdapterCore, dict[str, object]]:
+    if not isinstance(request, ResumeRequest):
+        raise ValueError("resume request required")
     if os.environ.get("HF_DEACTIVATE_ASYNC_LOAD") != "1":
         raise ValueError("explicit sequential weight loading is required")
     return _load_verified_adapter(request, spec, tokenizer_directory, weight_directory, device)

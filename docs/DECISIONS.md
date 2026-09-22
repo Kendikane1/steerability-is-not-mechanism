@@ -54,8 +54,8 @@
   replacement and reverse replacement passed on the P1-015 synthetic pair/directions.
 - P1-015 verifies bounded Qwen coordinate/reverse replacement; scientific generalization and
   long-job guarantees remain unestablished. Failure cleanup is also covered by synthetic tests.
-- Phase 1 shard size, checkpoint format, resume semantics, activation tolerance, and storage
-  budget.
+- P1-016 specifies the bounded local shard/checkpoint/resume protocol below; multi-hour
+  operation, crash/power-loss durability across systems and scientific execution remain unverified.
 
 ### P1-005 / Local tokenizer protocol established 2026-09-15
 
@@ -292,6 +292,50 @@
 - Keep float64 reference construction followed by float32 application for this engineering
   implementation; a device-native coordinate constructor is not yet implemented or verified.
   Next bounded step is shard/resume engineering, not scientific execution.
+
+### P1-016 / Local deterministic shard/resume protocol, 2026-09-22
+
+- Fixed four jobs on the P1-015 synthetic pair: capture and dense counterpart-coordinate edit
+  in each context. Job IDs and seeds are immutable; two shards use the existing SHA-256 mapping
+  and sorted IDs. Shard0 has three jobs; shard1 has one. Each edit computes its own donor/source
+  captures, avoiding checkpoint dependencies between jobs. No additional scientific items.
+- SQLite per local shard with rollback journal, synchronous FULL, one writer transaction spanning
+  compute/insert/commit, unique result ID and SHA-256 of canonical metadata plus payload. Locks
+  are OS-managed; never delete a stale lock manually. Concurrent writers fail closed. Completed
+  rows are verified/skipped; unfinished transactions are recomputed, not counted as completed.
+- Store only result arrays/metadata, not model state. Max2 MiB array payload/job and64 MiB DB/shard;
+  these are small engineering limits, not a scientific retention plan. Raw outputs remain ignored.
+- Resume identity includes fixed manifest, source/lock/protocol hashes, strict request values,
+  actual device, Python/platform/packages, SQLite and runtime environment. Changed identity or
+  corrupt completed records is an error before lazy model construction. No automatic migration.
+- Compare uninterrupted versus SIGKILL-before-commit/fresh-process resumed outputs with the
+  existing element1e-5 absolute+relative and margin1e-4 limits, also reporting exact equality.
+  Require no committed-row duplication/recomputation, partial-row rollback and zero-work replay.
+- Bound claim to this synthetic workload on the local Mac/filesystem. This does not establish
+  multi-hour reliability, hard power-loss durability, shared/network filesystem support or remote
+  CUDA/scientific-job resumability. A completed run is not a private backup strategy.
+
+- Measured P1-016 outcome: four unique completed jobs and16 saved arrays match the uninterrupted
+  reference exactly after a real SIGKILL-before-commit and fresh-process resume. The committed job
+  is preserved/skipped, unfinished work reruns, completed replay performs zero model work, and
+  changed-device identity is refused before load. Milestone4's short local acceptance is passed;
+  the broader operational limitations above remain open. P1-017 reviews this evidence below.
+
+### P1-017 / Consolidated review, 2026-09-22
+
+- Five bounded local milestones are reviewed; this does not close the full engineering gate in
+  `RESEARCH_SPEC.md`. Resumable multi-hour execution and safe GPU-memory headroom remain open.
+- Saved numerical evidence and checkpoint hashes pass a fresh offline audit. Preserve the
+  original P1-016 report and console; record an explicit amendment for the delayed 286-byte
+  shutdown warning appended after the interrupted console's recorded checksum. Details and
+  exact hashes: `PHASE1_ENGINEERING_REVIEW.md`. No generic checksum exception is permitted.
+- Reject existing checkpoints larger than the unchanged 64 MiB budget. Finalize future worker
+  logs at pipe EOF, including inherited writers, before hashing. Both fixes have synthetic
+  regression tests; no new model inference was performed for this review.
+- Keep strict source identity: changed code refuses old checkpoints rather than migrating them.
+  Old results remain valid historical evidence under their recorded source identities.
+- Next recommendation is a predeclared sustained local synthetic protocol with memory/abort
+  criteria and a small dry run. No scientific layer, direction or pilot choice is settled here.
 
 ## Must resolve before the scientific pilot
 

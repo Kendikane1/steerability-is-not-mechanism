@@ -661,6 +661,153 @@ test material here.
   engineering review. Stop here for the requested teaching walkthrough. User authorized publishing
   P1-014/P1-015 code and documented findings; raw arrays/weights remain ignored local artifacts.
 
+## 2026-09-22 / P1-016 / Deterministic shard and hard-interruption resume — prediction
+
+- Authority: user requested milestone4 engineering through decisive results, with iteration,
+  tests and documentation. No scientific execution/new downloads/remote workload. HEAD918d129,
+  clean initial checkout. P1-015 results are historical; no reuse as fresh model checks.
+- Question/prediction: will a fresh process resume only uncommitted work and reproduce an
+  uninterrupted run's arrays within the unchanged P1-007 element/margin bounds? Expect exact
+  equality but record any nonzero errors. Do not use outcome direction to select runs.
+- Fixed four engineering jobs on the existing synthetic pair: high_capture, low_capture,
+  high_edit, low_edit. Edit jobs independently capture both contexts then apply the fixed dense
+  counterpart coordinate; no inter-job activation dependency. One captured forward per capture
+  job, three per edit job, eight per complete job list. Per-job seed1729. No new scientific items.
+- Two shards via existing SHA-256 ID assignment, sorted IDs. Literal IDs
+  `synthetic-resume-{high_capture,low_capture,high_edit,low_edit}` map high_capture to shard1,
+  the other three to shard0. Uneven tiny shards are accepted, not reshuffled for balance.
+- Proposed local checkpoint: one SQLite database per shard, explicit transactions, synchronous
+  FULL/rollback journal, unique run_id. Hold writer transaction across a job; concurrent same-shard
+  workers fail closed rather than duplicate compute. Save arrays plus checksummed metadata/BLOB
+  in one commit. A killed uncommitted job may be recomputed; committed jobs must never be rerun.
+- Resume identity freezes ordered job manifest, config/protocol/source/lock hashes, Python and
+  package/platform/device/runtime identity. Refuse incompatible identity or corrupt completed
+  rows before model loading. This is same-machine/local-filesystem support, not shared storage.
+- Initial storage bounds: at most2 MiB payload per job,64 MiB database per shard (tiny fixture
+  should be far smaller); no model checkpoint or optimizer state. No implicit migration/resume
+  across changed code/device. Exactly-once committed output, not exactly-once attempted compute.
+- Acceptance experiment: uninterrupted shards0/1; interrupted shard0 killed by supervisor after
+  INSERT but before COMMIT of its second job, preserving first committed job; fresh resume0/1;
+  completed replay with zero model load/forwards. Check exact IDs/counts, checksum preservation,
+  array shapes/finiteness and numerical agreement. Changed device metadata must fail before load.
+- Unit tests cover duplicate IDs, tampering, rollback, incompatible metadata and writer contention.
+  Preserve all subprocess logs/statuses. No multi-hour/power-loss/remote reliability claim follows.
+
+- Implementation/static iteration: initial131 tests passed; basedpyright flagged NumPy
+  `savez` keyword typing. Made `allow_pickle=False` explicit; full checks and direct type checks
+  on both launcher/supervisor scripts then passed. Added explicit source/tokenizer/seed/dtype/
+  package mismatch cases before the model experiment. No model was run to diagnose this issue.
+
+- Pre-model verification passed:136 tests in2.53s, locked offline sync, Ruff lint/format
+  (53 files), basedpyright, explicit worker/supervisor script type checks, synthetic smoke and
+  whitespace. Commands/outcomes/source hashes: `outputs/phase1/p1-016/verification.json`.
+  Supervisor uses a180-second per-worker deadline, saves attempts, and kills only its own child.
+
+- Outcome: supervised `check-01` PASSED, exit0, 2026-09-22 11:55:53–11:58:56 UTC on
+  local `mps:0` float32. Reference shard0/1 used7/1 forwards. Interrupted shard0 used4 forwards
+  and was intentionally SIGKILLed (exit-9) at `low_capture` after INSERT/before COMMIT.
+  A12,824-byte rollback journal existed; a separate reader saw only committed `high_edit`.
+- Fresh resume0 skipped `high_edit`, preserved its checksum, and executed only `low_capture`
+  and `low_edit` (4 forwards). Resume1 executed `high_capture` (1 forward). Total17 forward
+  attempts:8 reference +8 completed resumed jobs +1 intentionally discarded unfinished capture.
+  No generated tokens, new model downloads, remote compute, or scientific data.
+- All four expected job IDs appear once per completed run, in deterministic shard assignment.
+  All16 saved arrays (logits, activations, donor/applied/direction where relevant) exactly equal
+  between reference/resume; max element error0, max margin error0. Shapes/dtypes/finiteness,
+  raw-logit/margin identities and geometry/hook checks passed. Tolerances were unchanged.
+- Completed replay: exit0, all three shard0 jobs skipped, model_loaded=false, forwards0,
+  unchanged completed hashes. Changed request-device metadata: expected exit1 with
+  `incompatible resume identity`, model_loaded=false, forwards0. Negative-case exit codes are
+  intentional evidence, not unexpected failures. The killed attempt retains its paused state;
+  the supervisor records its actual termination rather than inventing a graceful completion.
+- Checkpoint sizes: each reference/resumed shard0 DB3,117,056 bytes, shard1 DB630,784 bytes,
+  below64 MiB limits. These are checkpoint sizes, not model RAM or peak disk usage.
+- Evidence: `outputs/phase1/p1-016/check-01/report.json`, SHA-256
+  `f2f453b5b3027b0a308fd8c957a5b11355b6f131c22a48e8335d7d315bd6bc68`, includes subprocess
+  commands/exits/attempt+console hashes, preserved committed hash, journal evidence, array
+  comparisons and final DB hashes. Attempt manifests embed code/protocol/config/package/device
+  identities. Execution receipt SHA-256
+  `0e6d416d4ee80b800011dc522d8cdd09373d38ef4aa15dfbf894c9f4d99c62ab` also links verification
+  and supervisor logs. Source/config/test files still match the clean136-test verification snapshot.
+- Interpretation: milestone4's bounded local shard/resume acceptance passed, including actual
+  process death inside a write transaction and cross-process model recomputation. It establishes
+  neither multi-hour/power-loss reliability nor remote/scientific readiness. No retries or relaxed
+  criteria were needed. Added `LOCAL_RESUME_PROTOCOL.md` with semantics, limits and reproduction.
+- Next: milestone5 consolidated engineering review, including remaining operational limitations.
+  Current changes remain local/uncommitted; no commit/push was requested for this milestone.
+
+## 2026-09-22 / P1-017 / Consolidated engineering review — before verification
+
+- Authority: user requested milestone5. Preserve uncommitted P1-016 work; no commit/push,
+  new downloads, remote workload, scientific data or pilot/locked execution authorized here.
+- Question/prediction: do the saved evidence and current implementation substantiate the five
+  bounded local milestones, and which broader gates remain unsatisfied? Expect local claims to
+  survive an independent saved-array/hash audit; do not equate short resume with multi-hour
+  execution or post-run allocations with peak-memory headroom. RESEARCH_SPEC remains controlling.
+- Deliverables: concise evidence/gate review, executable offline walkthrough notebook using
+  saved artifacts (zero model calls), fresh full verification, documented findings and fixes.
+  Historical model runs remain historical; fresh hash checks are not fresh model inference.
+- Code-review finding to reproduce: SQLite's requested max_page_count may clamp upward when an
+  existing database is already larger. Check refusal under a lowered test-only budget, add a
+  narrow constructor check if reproduced. This must not change model or numerical behavior.
+- Review original CLI/pilot/locked guards, real artifact hashes and saved probabilities,
+  coordinate/reverse geometry, resume transaction evidence and array equality. Missing evidence
+  must be reported as missing; no tolerance changes or silent completion of scientific choices.
+
+### P1-017 / Findings and corrections
+
+- Existing-DB budget regression reproduced before the fix: the new test failed because no
+  exception was raised. Read SQLite's returned max_page_count and reject if above the requested
+  budget. Focused store tests then passed, including preservation of the existing row on refusal.
+- First evidence-only notebook failed on the historical interrupted console checksum; retained
+  at `outputs/phase1/p1-017/notebook-01/phase1_engineering_review.executed.ipynb`.
+  The recorded hash matches precisely the first4,735 bytes; current5,021-byte file adds286 bytes
+  of resource_tracker shutdown warning. Exact hashes and interpretation are recorded in
+  `PHASE1_ENGINEERING_REVIEW.md`. Original console/report unchanged. This is a provenance
+  amendment, not a numerical failure or permission to accept other hash mismatches.
+- Correct future supervision: capture stdout/stderr through a pipe and wait for EOF, including
+  inherited writers, before hashing. Synthetic tests cover output from a delayed descendant and
+  refusal to certify an unfinished stream. No new model-backed supervisor run was made.
+- `notebook-02` subsequently completed with status
+  `saved_evidence_verified_with_documented_console_amendment`:16 exact resume arrays, zero
+  model forwards. The audit also rehashes local weights/tokenizer and recomputes saved full-
+  vocabulary scores, no-op equality and paired/reverse geometry; reads checkpoint DBs immutable.
+- Initial full verification (`verification-01`) passed139 tests then stopped on notebook import
+  formatting. Fixed formatting; added EOF/amendment regression tests. A subsequent type check
+  found an overly narrow binary-stream annotation and a non-exported Jupyter import; corrected
+  both without suppressing checks. Final verification and executed artifacts are recorded below.
+- Current code changes intentionally invalidate old source-bound resume identities. No identity
+  migration or guard/tolerance weakening. Scientific configs remain disabled.
+
+### P1-017 / Final verification and interpretation
+
+- Fresh `verification-02` passed locked/offline environment sync;142 tests; Ruff lint and format
+  (61 files); configured source/test type checks plus explicit checks of the review clients and
+  resume supervisor; weight-free `sim-smoke`; evidence notebook execution; Git whitespace.
+  Test/type/style commands returned0 with no type errors or warnings. Kernel emitted its local
+  TCP transport warning; notebook completed all five code cells without errors. No remote server
+  or external workload was started. The synthetic smoke values remain fixtures, not model results.
+- Commands, UTC timestamps, output hashes and current source/config/lock hashes:
+  `outputs/phase1/p1-017/verification-02/verification.json`, SHA-256
+  `9a663504767356e400a814736ff2cd6e98210979e64f7acaa7345650866d188f`.
+  Rechecked those source hashes against current files after verification; all match.
+- Final executed notebook (after import/type corrections):
+  `outputs/phase1/p1-017/notebook-03/phase1_engineering_review.executed.ipynb`, SHA-256
+  `309c409b6f79ecf605bdfde4cb80802790247bb4bc76e45d30caec7499a9d2f6`.
+  Summary `notebook-03/evidence_review.json`, SHA-256
+  `8ff987c1e763789d06facebf97a62d2cce2a0bec09fa4e468aeee529c9ec720d`.
+  Status is explicitly verified-with-console-amendment, not an unqualified match of every
+  historical log. All16 resumed arrays are exactly equal. Weight/tokenizer checksums match.
+  Recomputed P(A)=0.9097180193043117, P(B)=0.08885151647736256, margin2.3261680603027344.
+  Tiny probability differences from the original arithmetic are below1e-12; margin is unchanged.
+- Verdict: milestone5 review complete; the five bounded local milestones have evidence. The
+  full engineering gate before pilot remains NOT MET: multi-hour resumability and safe GPU
+  memory headroom are unestablished. This review does not make a scientific claim or resolve
+  scientific choices. Historical Qwen runs were not rerun with the new storage/logging fixes.
+- Published locally `PHASE1_ENGINEERING_REVIEW.md` and executable walkthrough source; updated
+  README, ROADMAP and DECISIONS. Next: predeclare a sustained local synthetic workload with
+  memory measurements, abort criteria and a small dry run. Changes remain uncommitted; no push.
+
 ## Entry template
 
 - ID / date / phase / status:
