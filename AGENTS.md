@@ -40,6 +40,9 @@ task regime.
 
 - Qwen3-0.6B is for local engineering/reproducibility smoke tests only. Local device order is
   MPS when supported, then CPU; never assume local CUDA.
+- The user authorized pinned Qwen3-0.6B float32 synthetic engineering checks on the remote
+  RTX 4060 on 2026-09-23, including verified transfer of existing artifacts. This exception
+  does not select a scientific model or enable pilot/locked execution. Keep Mac runners local.
 - Qwen3-1.7B FP16 on the remote RTX 4060 is only a candidate primary model and requires the
   scientific pilot to pass. Colab is optional replication capacity, never a core dependency.
 - Do not download weights, access remote compute, create confirmatory data, or run scientific

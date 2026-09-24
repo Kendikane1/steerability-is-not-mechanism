@@ -808,6 +808,447 @@ test material here.
   README, ROADMAP and DECISIONS. Next: predeclare a sustained local synthetic workload with
   memory measurements, abort criteria and a small dry run. Changes remain uncommitted; no push.
 
+## 2026-09-23 / P1-018 / Publish checkpoint and propose sustained-test protocol
+
+- Authority: user accepted the recommendation to commit/push milestone4–5, then prepare the
+  sustained-test plan. No model, rehearsal, long-run or remote-compute execution in this step.
+- Before publication, compared current source/config/lock hashes to P1-017's clean142-test
+  verification snapshot: all match. This was a fresh identity check, not a fresh test run.
+  Git whitespace checks passed. Staged only the20 intended source/test/config/documentation
+  files; model weights and generated evidence remained ignored.
+- Committed checkpoint `d1ff9bd` (`feat: verify local shard resume and consolidate engineering
+  evidence`). Push to `origin/main` succeeded; `git ls-remote origin refs/heads/main`
+  and local HEAD both returned `d1ff9bd267f05793eab4600f332a745e9546c3cf`.
+  Subsequent P1-018 planning documents remain local/uncommitted for review.
+  Documentation whitespace check passed; no code changed after the published checkpoint.
+- Question/prediction for the proposed next test: will fixed repeated jobs remain numerically
+  stable and memory-bounded over hours, including interrupted/resumed execution? Expect a
+  post-warm-up plateau and matching arrays; failures remain evidence, never grounds to relax limits.
+- Wrote `LOCAL_SUSTAINED_TEST_PLAN.md`: proposed12-cycle rehearsal, fixed-count two-hour arms,
+  one midpoint interruption, unchanged numerical limits, storage budget, memory monitoring and
+  resource/liveness stops. Exact implementation, cycle count and monitor validation remain open.
+- Read installed PyTorch MPS memory API source (no model construction) to distinguish tensor
+  allocations, driver allocations and recommended working set. Proposed sampled monitoring
+  cannot certify instantaneous peaks or remote scientific-model headroom.
+- Plan/documentation only; no model probabilities, timings, memory measurements or experimental
+  outcomes produced. Next: review proposed limits, then implement/test the scoped monitor/runner.
+
+## 2026-09-23 / P1-019 / Approved sustained execution — startup resource gate
+
+- User approved the P1-018 limits and requested completion through rehearsal and sustained
+  execution, conditional on those limits. This supersedes the planning-only authority recorded
+  in P1-018; no new weights, scientific work, remote operations or publication are authorized.
+- Before model loading, read-only system commands returned pressure2, swap used8409 MiB and
+  approximately31.46 GiB available disk. Prediction for the next bounded check: an executable
+  startup gate should refuse warning pressure without importing torch or loading any weights.
+  No pressure was induced and no unrelated applications were terminated.
+- Verified Apple's source distinguishes dispatch pressure constants1/2/4 (normal/warning/critical)
+  from the unrelated internal enum0/1/2/3. Sources inspected:
+  https://github.com/apple-oss-distributions/xnu/blob/main/bsd/kern/kern_memorystatus_notify.c
+  and https://github.com/apple-oss-distributions/xnu/blob/main/bsd/sys/event_private.h .
+  Local SDK headers did not expose the needed definitions; used official source as fallback.
+- Implemented weight-free `resource_guard.py` and `notebooks/check_sustained_resources.py`:
+  read-only sysctl calls with2-second timeouts, strict reading/unit parsers, timestamps,
+  startup/runtime disk thresholds, swap-growth and output caps, stale telemetry refusal and
+  MPS allocation arithmetic. This is the startup gate and limit logic, not the full sustained
+  runner, sampling supervisor or model-backed headroom validation.
+- Initial17 synthetic boundary tests passed. Next: retain live preflight outcome and complete
+  tests including missing telemetry; no rehearsal is permitted unless startup conditions pass.
+
+### P1-019 / Startup refusal and verification outcome
+
+- Live preflight command: `uv run --locked --offline python
+  notebooks/check_sustained_resources.py --output-dir outputs/phase1/p1-019/preflight-01`.
+  Expected refusal exit1 at2026-09-22T17:16:24 UTC (September23 local): pressure2/warning,
+  swap8443.19 MiB, available disk33,775,595,520 bytes (31.46 GiB). Disk startup reserve passed;
+  pressure failed. This is a failed startup gate, not a failed model computation. Zero model loads
+  and forwards. No automatic retry, app termination, memory-pressure manipulation or remote work.
+- Saved report SHA-256 `02fd81907160534a60ea93eb060b7a03608569947ed1f9b17d8134440f7e8ff3`
+  at `outputs/phase1/p1-019/preflight-01/report.json`, including raw readings and source hashes.
+- First full verification passed161 tests and lint/format, then exposed a test-only dictionary
+  type inference mismatch (bool treated as int). Changed the test to explicit keyword arguments,
+  without altering limits or suppressing checks. Failed verification retained in `verification-01`.
+- Final `outputs/phase1/p1-019/verification-02/verification.json` passed locked/offline sync,
+  all161 tests, lint, formatting, source/test type checks, explicit preflight-client type checks,
+  weight-free synthetic smoke and whitespace. SHA-256
+  `08d7df4ac471d442bfde4f3db1387185b4a2f60a89cf5db1e3e5b5687cd7f7e8`.
+  Tests include unavailable telemetry and CLI refusal without importing torch/transformers.
+- Interpretation: startup resource gate is implemented/tested and correctly refuses present
+  warning pressure. Full sustained runner/sampling supervisor, rehearsal, manifest calibration
+  and long arms are NOT complete. No local endurance/headroom pass or Phase2 transition claimed.
+  The earlier milestone5 audit remains historical and intentionally rejects new, unreviewed source
+  additions; it has not been relabeled as a fresh audit of this changed checkout.
+- Asked user to close memory-heavy applications they choose and report readiness; no reply yet.
+  Once host pressure is normal, resume implementation/verification and rehearsal under existing
+  authorization. Changes remain local/uncommitted, preserving P1-018 planning work.
+
+## 2026-09-23 / P1-020 / Revised-pressure rehearsal — before execution
+
+- Authority: user explicitly requested ignoring warning pressure for this local engineering
+  workload and autonomous completion. Record warnings; retain critical/unknown-pressure stop
+  and all other limits. P1-019 remains a valid refusal under its original normal-only criterion.
+- Question: can the fixed12-cycle workload repeat and resume under monitored warning pressure,
+  and are time/storage requirements feasible for a later sustained run? Prediction: repeat arrays
+  remain stable, but existing paging may trigger the unchanged256 MiB swap-growth stop. A stopped
+  run is operational evidence, not scientific evidence or an invitation to relax another limit.
+- Implemented separate rehearsal request, manifest, memory sampler, worker and supervisor; no
+  widening of older requests. One model/process across three bounded shards; atomic progress
+  records; expected midpoint kill; strict checkpoint identity; full saved-array comparisons.
+- Freeze193-forward total protocol (96 reference +49 interrupted +48 resumed),600-second/arm
+  deadlines,30-second startup/fault deadlines,180-second progress deadline and5-second stop grace.
+  Rehearsal timing warm-up is first two cycles; long-run10-minute memory warm-up remains separate.
+- Weight-free tests cover request scope/budgets, deterministic partition, revised pressure rule,
+  full-array/margin rejection and sampler stop/error handling. Initial lint/type issues (loop
+  closure binding and optional-value narrowing) were fixed without suppressions before execution.
+- No model run yet. Next: full verification, freeze source/config hashes, run the rehearsal once;
+  if stopped, preserve partial outputs and diagnose without an automatic retry or relaxed limits.
+
+### P1-020 / Verification, measured stop and audit
+
+- Fresh verification passed171 tests, locked/offline sync, lint/format (69 files), source/test
+  and explicit runner/supervisor type checks, synthetic smoke and whitespace. Report:
+  `outputs/phase1/p1-020/verification-01/verification.json`, SHA-256
+  `e9f119f577658c03dfd8db6a3f2e048fd47486f89ececce5725fa6bdc3195cf8`.
+  Current source/config bytes matched this snapshot before launch and during the stop audit.
+- Exact command and environment are retained in `outputs/phase1/p1-020/execution_receipt.json`,
+  SHA-256 `8e84ecdd18def6a1dfb5ae036bb0d909bc2efa75b2d695d0953accbeefce2113`.
+  Supervisor started17:32:27 UTC, finished17:32:43 UTC, exit1. Initial pressure1 allowed startup;
+  pressure2 later was recorded without rejection under the explicit user revision.
+- Outcome: system swap rose from3338.62 to3727.94 MiB (+389.32 MiB), exceeding the unchanged
+  256 MiB growth stop. Supervisor requested cooperative stop, waited5 seconds, then killed its
+  owned loading worker (exit-9). No forward calls or completed jobs; model construction began
+  but did not complete. No automatic retry or long run followed this failed prerequisite.
+- Fourteen worker memory samples and11 system samples retained. Sampled driver peak3,401,973,760
+  bytes versus recommended5,726,633,984; below the separate80% MPS limit. Sampled RSS peak
+  1,090,306,048 bytes. These are sampled allocations, not complete instantaneous peak/fit evidence.
+- Independent stop audit: source hashes match; checkpoint integrity ok and0 rows; finalized
+  console SHA matches including delayed resource_tracker warning. Report SHA-256
+  `cbb4175d0333b637da7c00f8a38e362d058005c825b88458ebf47ca489de9223`.
+  `outputs/phase1/p1-020/stop_audit.json` SHA-256
+  `fd6652fbcecd47bbd9ba0500064f23927dc304f39b6908eeed84edc3aa7dd46b`.
+- Interpretation: autonomous resource stopping and delayed-log capture worked on this loading
+  interruption. Intended midpoint resume, repetition, throughput and multi-hour headroom are
+  untested by this attempt. System-wide paging cannot be attributed solely to Qwen from these
+  readings. The256 MiB limit is a stop trigger; sampling/grace can allow overshoot before exit.
+- Documented `SUSTAINED_REHEARSAL_RESULT.md`. Next diagnostic condition: a fresh idle host
+  session to reduce competing demand, then a separately recorded attempt without changing limits.
+  Do not claim Phase2 readiness or automatically change precision/device/retention to force a pass.
+  No commits/pushes, new downloads, unrelated application termination or remote workloads.
+
+## 2026-09-23 / P1-021 / Read-only remote readiness assessment
+
+- Authority: user confirmed Windows PC readiness and supplied the private SSH connection
+  command. Scope is connectivity, available GPU/RAM/disk, installed environment and checkout
+  state only. No weights, model loading, workload, code transfer, dependency sync or task startup.
+  Read `REMOTE_COMPUTE.md` before connecting; historical infrastructure evidence remains historical.
+- Question/prediction: is the existing machine reachable and provisioned for designing a small
+  CUDA engineering check? Expect installed CUDA PyTorch/4060, but verify current capacity and
+  repository drift; availability is not proof of model fit or hook reproducibility.
+- SSH succeeded with the supplied identity, public-key-only auth, strict host-key checking and
+  bounded connection timeout. Connection details remain outside tracked records. Client emitted
+  a non-post-quantum key-exchange warning; authentication was not weakened or reconfigured.
+- Submitted a read-only metadata script: nvidia-smi query; Windows RAM/disk/boot metadata; Git
+  HEAD/branch/status; project Python package versions and CUDA availability (no tensors/model);
+  relevant file hashes; scheduled-task states; expected model-file existence only.
+  Command source/output/exit retained in ignored `outputs/phase1/p1-021/readiness-01/`.
+
+### P1-021 / Fresh readiness findings and next proposal
+
+- Metadata query exit0: RTX4060,8188 MiB total/7891 MiB free,0% utilization,36°C; driver591.86.
+  Python3.12.14, torch2.13.0+cu130, CUDA13.0 available/one device. No tensors/model calls.
+  RAM7.90 GiB total/4.83 GiB free; disk31.36 GiB free, above20 GiB runbook reserve.
+- Remote main remains69d03d7 with earlier uncommitted infrastructure edits (five modified,
+  three untracked files). Lock/pyproject, standard snapshot, runbook and environment test hashes
+  match local files. No pull/reset/sync or changes to the remote checkout. All four Research
+  scheduled tasks are Ready, not Running. Expected pinned0.6B model path is absent; global caches
+  uninspected. Snapshot availability does not prove model-backed GPU or host-RAM headroom.
+- Follow-up instruction/task inspection first hit a local UTF-8 decoding error on PowerShell
+  output. Reissued read-only with explicit UTF-8. PowerShell serialized extra provider metadata
+  around Get-Content strings; retained raw output privately and extracted concise values for
+  review. No credentials requested or authentication settings changed. Remote parent instructions
+  absent; bundled standard hash matched the already read standard; remote AGENTS read completely.
+- Main metadata SHA-256 `7fd02aa76e549e86f2e8af23624316986cb4722e76bba9a8f24a595db33471c5`;
+  concise follow-up SHA-256 `ebca6963354a68e66c5386fd5cc4e6a581bec405b9d9ca596e042923d9baa38c`.
+  Paths/scripts are in `outputs/phase1/p1-021/readiness-01/`; connection details not tracked.
+- Added `REMOTE_READINESS_REVIEW.md`: next proposal preserves remote edits, prepares a reviewed
+  CUDA-only engineering runner, transfers already verified0.6B artifacts by checksum, then runs
+  one original synthetic scoring pass under predeclared limits. Those mutations/model workloads
+  are not part of this read-only authorization and were not performed. No installation is
+  presently indicated by dependency identity. Local docs only changed; whitespace checked.
+
+## 2026-09-23 / P1-022 / Reconcile remote and begin scoped CUDA engineering
+
+- Authority: user approved the readiness proposal and continuation toward yesterday's engineering
+  work. Preserve remote edits/configuration; no new scientific model, pilot data or execution.
+- Eight dirty/untracked remote files backed up with verified hashes and a binary patch in
+  private Research/reports/p1-022-before-reconcile, also retained in Git stash. Seven match
+  published701ebd4 exactly; AGENTS lacks only the later runbook paragraph. Remote main cleanly
+  fast-forwarded69d03d7→d1ff9bd. No ops/auth/task registration changes, reset, commit or push.
+- Transferred existing1,503,300,328-byte0.6B weight, tokenizer bundle and inspection.json over SSH.
+  Remote size/SHA checks passed before weight .partial rename; tokenizer/reference hashes pass.
+  Initial SCP option quoting failed before transfer because account name contains spaces; corrected
+  quoting, no authentication changes. No external model download.
+- Added explicit remote0.6B engineering exception to AGENTS, distinct CUDA request/runtime and
+  bounded worker/supervisor. Mac requests/loader remain CPU/MPS only; scientific guards unchanged.
+  `REMOTE_ENGINEERING_PROTOCOL.md` freezes modes/budgets, CUDA settings and Windows resource stops.
+- Prediction: CUDA baseline and within-backend hooks/geometry/resume can pass; do not assume
+  MPS bitwise equality or1.7B fit. First run is one original synthetic scoring pass, then only
+  advance if its gates pass. Remote full verification and snapshot hashes precede model execution.
+- Local initial184 tests passed; type checks exposed an incomplete PyTorch stub for the generic
+  precision property. Set the explicitly supported CUDA matmul/cuDNN IEEE properties instead;
+  no numerical setting or validation is relaxed. Final verification retained below.
+
+### P1-022 / First CUDA result and interrupted-session recovery
+
+- Original deployment verified all95 reviewed file hashes; remote and local verification passed
+  184 tests plus static checks and synthetic smoke. Remote single-01 passed one forward: bare A
+  probability0.9097237794557591, B0.08884580882855371, margin2.3262386322021484.
+  Raw logits SHA256 `ffcef3eeb63a63feea31cacbea10b9cff49779973b20b1ae0ac4bbadf20fed4c`.
+  Post-forward free GPU4,204,789,760 bytes; allocator peak3,162,115,584 bytes. This establishes
+  short float32 engineering fit only; no lovingness direction or scientific phenotype claim.
+- Before resume execution, discovered Windows virtual-environment launcher PID differs from its
+  actual worker. Supervisor now validates the worker's parent and terminates its owned process
+  tree, including both launcher and worker. No change to intervention math or numerical limits.
+- After a usage-limit interruption, user requested continuation. Reconnected with existing strict
+  SSH settings; only single-01 existed/passed, no Python processes were reported, GPU idle with
+  7891 MiB free. All95 remote deployed bytes matched the original deployment manifest before any
+  update. Git reports many modified paths after the byte-identical snapshot transfer;
+  verified deployment bytes establish no intervening drift, without discarding any files. Existing backup/stash remain retained.
+- Deployed only process_control.py, supervisor, regression test and protocol amendment with hashes
+  in `outputs/phase1/p1-022/process-fix-manifest.json`. Fresh185 tests pass on both hosts; local
+  lint/format and source/test/runner type checks pass. Real Windows weight-free process probe
+  confirmed distinct launcher/worker PIDs and no surviving worker after owned-tree termination.
+- Next checks retain the predeclared gates: mechanics6+18 forwards, then the17-attempt small
+  interruption/resume comparison only if mechanics passes. New outputs use separate directories;
+  no rerun of the already passed single score and no sustained workload yet.
+
+### P1-022 / CUDA mechanics and short resume passed; retrieval interrupted
+
+- Remote command: project Python `notebooks/check_remote_engineering.py --stage mechanics
+  --output-dir outputs/phase1/p1-022/mechanics-01`; supervisor returned `passed`, exit0.
+  This covers the six no-op/capture/identity passes and18 paired/reverse geometry passes.
+- Then `--stage resume --output-dir outputs/phase1/p1-022/resume-01` returned `passed`, exit0.
+  Supervisor acceptance includes four unique jobs, every saved array compared to uninterrupted
+  execution, preserved committed checksum, rollback/recompute of the interrupted transaction,
+  zero-work completed replay and pre-load incompatible-identity rejection. Exact numerical
+  summaries await the retained report audit; do not invent errors or resource extrema.
+- Saved launch scripts/stdout in local ignored `outputs/phase1/p1-022/`. All model stages finished
+  before the connection problem below; no model restart or long-run workload was launched.
+- Retrieval copied the complete single-01 bundle. Local audit confirmed its saved state, console
+  and logits SHA hashes. Mechanics/resume downloads are partial under `retrieved/`; do not treat
+  incomplete transferred files as valid evidence. Original complete outputs remain on Windows.
+- During retrieval, SCP closed and a new strict SSH connection timed out. Stopped only our two
+  stalled local SCP clients, preserving partial copies and all remote artifacts. Cause unverified
+  (could be host/network availability); no authentication/host-key/firewall change. A prepared
+  remote audit script did not successfully transfer/run, so no final-audit pass is claimed.
+- Next: restore connectivity, retrieve mechanics-01/resume-01 and verify every artifact/checkpoint
+  hash and comparison. Then specify a separate12-cycle CUDA rehearsal and use its timings/output
+  sizes to assess the unchanged sustained duration/storage plan before any multi-hour run.
+  Broad Phase1 exit, sustained headroom and scientific1.7B/pilot readiness remain unestablished.
+  Changes and infrastructure backup/stash remain preserved; no commit or push performed.
+
+### P1-022 / Connection recovered; remote evidence audit passed
+
+- The follow-up connection succeeded. The earlier timeout was transient; no user intervention or
+  security-setting change was needed. Successfully transferred and ran the prepared read-only
+  audit, validating all saved console/array/checkpoint hashes and checkpoint integrity; independently
+  compared every resumed array to the reference. The audit enumerates82 evidence files.
+- Mechanics accepted all24 calls; no-op scores exact. Dense paired edits had maximum projection
+  error1.1181e-7 and orthogonal error1.2332e-6, below predeclared limits. Resume used17 attempts;
+  four jobs/16 saved arrays matched exactly. Replay/incompatible probes each loaded no model and
+  made no forward calls. Incompatible probe's failed worker status is an expected successful guard.
+- Across single/mechanics/resume, lowest sampled GPU free4,202,692,608 bytes and allocator peak
+  3,162,115,584 bytes. These short samples cannot certify sustained headroom. No numerical limits
+  were revised, no retries of model stages were needed, no multi-hour job was started.
+- Report SHA256: single `633b5bdfe2f9a63a4fbb5b79c7ec43a04b7abdcd38ab564db59d5808b1674b0d`;
+  mechanics `f12343f1ef28e4e6c413932c7b4084568953db51b0d010afb10842eb8118ab77`;
+  resume `504411ee5d538ce50f66d59f049b97e85773e7e226d6233bde5ac4b6f324b04d`.
+- Final remote idle check:0 Python processes,7891 MiB free GPU,0% utilization. No model job
+  remains running. `final-audit.json` local SHA256
+  `8dea590fa90ad38eea70f2ee804ba60675a580f8e55ecffe5bb2f3ea4291b544`.
+- Retrieved a lossless4,042,760-byte archive; SHA256
+  `027cbc362390166c1ff22b9140a2aa06b7860e96f2dcc7fafc06a1190dac0c47` matched Windows.
+  Extracted to local `verified-evidence/` and checked all82 files against the remote audit.
+  `retrieval-audit.json` records the pass. Earlier partial copies remain explicitly non-authoritative.
+- `REMOTE_ENGINEERING_RESULT.md` summarizes the engineering result. Next remains the separately
+  budgeted CUDA rehearsal and sustained-run feasibility gate, not scientific execution.
+
+## 2026-09-23 / P1-023 / CUDA rehearsal — before execution
+
+- User requested the next step after the verified short CUDA checks. Question: can one loaded
+  model repeat48 synthetic jobs across three shards and reproduce them after interruption, and
+  can the proposed multi-hour full-array workload fit the unchanged4 GiB output cap?
+- Prediction: unchanged numerical/recovery gates pass, but fast CUDA throughput may make full
+  retention infeasible. Freeze `REMOTE_REHEARSAL_PROTOCOL.md` and the distinct12-cycle/96-call
+  request; complete comparison budget193 attempts (96+49+48), plus zero-work probes.
+- Reuse fixed fixtures, float32 geometry, source-bound checkpoints and owned Windows process-tree
+  shutdown. Add atomic latest telemetry for an independent stale-reading check; existing short
+  requests keep their budgets and180/210-second deadlines. New rehearsal arm caps600 seconds,
+  existing GPU/RAM/20 GiB disk reserves and all numerical limits remain unchanged.
+- Full retained arrays, fastest post-warm-up cycle calibration and storage formula are specified
+  before results. No automatic long run or changed retention if feasibility fails. Next: verify,
+  deploy only hash-reviewed changed files while preserving remote work, then execute once.
+
+### P1-023 / Initial Windows progress-file failure and prospective correction
+
+- Both hosts passed188 tests and full verification. Hash-checked deployment preserved all known
+  remote source bytes; prior modified targets were backed up privately before replacing them.
+- `rehearsal-01` stopped in its reference arm: Windows denied atomic replacement of attempt.json.
+  Saved worker state reports12 forwards, six committed jobs, then failure. No intended midpoint
+  interruption, reference completion, calibration or long run occurred. Failed outputs retained.
+- Diagnosis to test: a supervisor reader briefly holding the destination can prevent Windows
+  replacement. Add Windows-only bounded metadata-publication retry (PermissionError,10 ms steps,
+  maximum1 second). Persistent errors still fail; no model or numerical retry is hidden.
+- Prospective protocol amendment permits a new separately recorded rehearsal-02 only after
+  regression tests and a real weight-free Windows transient/persistent reader-lock probe pass.
+  Old source-bound checkpoints remain preserved and incompatible, not migrated or overwritten.
+
+### P1-023 / 2026-09-24 / Publication fix verified; manual handoff
+
+- Follow-up verification exposed a Ruff import-spacing issue after adding the retry constant;
+  corrected without changing runtime behavior. Final local verification-03 passed190 tests,
+  locked/offline sync, lint/format, source/test/runner type checks, smoke and whitespace.
+- Remote final verification passed190 tests, lint/format and both type-check scopes. A weight-free
+  Windows probe reproduced direct replacement denial with an open reader, then verified successful
+  publication after the reader closes and persistent-denial refusal after1.0 seconds. This supports
+  the file-sharing diagnosis; no permission/ACL, numerical or resource limit was relaxed.
+- User reported rapid Codex allowance use and asked how to run manually. Prepare the verified
+  manual PowerShell launcher instead of starting another model attempt in this turn. It checks
+  frozen source hashes and the successful Windows probe, sets offline/CUDA environment, refuses
+  an existing attempt, holds an exclusive launcher lock, runs the bounded supervisor and prints
+  a concise status/call-count/storage summary. Underlying resource and recovery checks remain.
+- Manual attempt target: `outputs/phase1/p1-023/manual-rehearsal-02`. No new model calls yet;
+  only failed rehearsal-01 has model evidence. Keep the SSH terminal connected for this bounded
+  foreground run; disconnect-independent multi-hour launching remains separate work.
+- Evidence: ignored `finish-verify.stdout`, `verification-03/`, `manual-source-hashes.json` and
+  `manual-ready.stdout`. No commits/pushes. After manual completion, audit the report before
+  drawing a rehearsal or long-run feasibility conclusion.
+
+### P1-023 / 2026-09-24 / Manual rehearsal-02 stopped on physical RAM
+
+- User supplied stopped supervisor summary. Bounded read-only SSH inspection of saved files
+  confirmed reference worker still loading, model_loaded=false, forward_calls=0. No new model
+  execution, retries, threshold changes or unrelated application termination performed.
+- Supervisor startup baseline: physical RAM available1,937,272,832 bytes, load77%; available
+  commit8,985,120,768 bytes. Final system sample: RAM available353,087,488 bytes (336.73 MiB),
+  load95%, available commit2,176,688,128 bytes. Physical RAM was below512 MiB and load reached95%;
+  available commit remained above its512 MiB threshold. The generic RAM/commit message does not
+  mean every component failed. Disk32,729,149,440 bytes remained above20 GiB.
+- Latest worker GPU sample was0.484 seconds earlier: free5,043,650,560 bytes (about4.70 GiB).
+  It is not an exact simultaneous reading, but this failure was triggered by the host RAM check,
+  not a reported GPU OOM. No Python processes were listed by the subsequent lightweight check.
+- Manual summary's null call count reflects the supervisor error path not attaching worker state;
+  direct saved attempt.json establishes0 forwards. This reporting limitation is recorded rather
+  than treating null as zero generally. No rehearsal/calibration/long-run result follows.
+- First broad diagnostic stalled; terminated only our local diagnostic SSH process and used
+  short25-second-bounded reads. Retained concise evidence in manual-stop-short.stdout and
+  manual-stop-baseline.stdout. Never touched the user's separate SSH connection.
+- Next: reduce unneeded background demand on Windows and check idle headroom before preparing
+  a separately recorded attempt. Original manual output remains preserved. Current evidence
+  cannot attribute all system RAM use to the model or establish an intrinsic GPU capacity limit.
+
+### P1-023 / 2026-09-24 / Orphaned diagnostic consumed Windows RAM
+
+- User noticed PowerShell using about4.6 GB. Read-only per-process inspection found one process
+  with4278 MiB working set and10732.5 MiB private allocation. No Python process was returned.
+- Sanitized command identity matched our earlier inspect-manual-stop.ps1 exactly: decoded-script
+  SHA256 `c17486d5e2cb6d82596d07d6d2ce026a72170ff9992ce998d4e3af6b59fc6f26`.
+  That diagnostic began2026-09-24T06:43:04.633Z, after the user reported the model stop. Killing
+  its local SSH client had not stopped remote PowerShell. This is an assistant-created orphan,
+  not evidence that the user's ordinary PowerShell terminal inherently needs gigabytes.
+- Revalidated the remote command hash immediately before terminating only that identified process.
+  First cleanup command returned nonzero without a usable acknowledgement; an independent
+  follow-up confirmed the process was absent (exit0). Do not infer cleanup success merely from
+  a command being sent. Retained process-memory, process-identity and cleanup receipts in ignored
+  p1-023 outputs.
+  The diagnostic's internal allocation cause remains unproven. Do not repeat that broad script.
+- Correction to earlier operational assumption: local transport cancellation is not remote process
+  cleanup. Future potentially blocking diagnostics need a remote time bound and explicit ownership/
+  exit verification; use narrow file-tail reads rather than a broad process/provider collection.
+  This orphan worsened current RAM pressure but cannot explain the earlier model-stop readings.
+  No new model attempt, limit change, user-app termination or authentication change.
+
+### P1-023 / 2026-09-24 / Prepare manual attempt03 with lower background demand
+
+- After removal of the orphaned diagnostic, user reported3.8 GB available RAM and closed the
+  applications they could. This is user-reported current headroom, not a model-fit guarantee.
+- User asked to repeat the test. Preserve attempts01/02 and all runtime/numerical/resource limits.
+  Only the manual launcher changes: explicit validated attempt02/03 selector and a new reviewed
+  launcher/hash-manifest identity. All underlying model/supervisor/source hashes remain frozen.
+- Back up prior launcher, verify its hash before deployment, and run new attempt03 CheckOnly.
+  No model execution by the assistant. The user will launch the same bounded comparison manually
+  into `outputs/phase1/p1-023/manual-rehearsal-03`; report any stop without another automatic retry.
+- Prediction: greater initial RAM availability may permit loading; if the same reserve fails
+  again, investigate peak loading requirements rather than attributing the issue only to apps.
+  No commit/push, new weights, scientific execution or relaxed thresholds.
+
+### P1-023 / Manual attempt03 — user-reported pass; long storage gate refused
+
+- User supplied launcher summary: rehearsal_passed, no error, forward counts96/49/48/0/0,
+  long_storage_feasible=false, estimated_long_output_GiB184.022. Record as user-reported
+  supervisor output, not a new independent audit of remote arrays/checkpoints or measured disk use.
+- Counts match the predeclared193-attempt protocol: reference96, interrupted49, resumed48,
+  completed replay0 and incompatible-identity probe0. The supervisor reports rehearsal acceptance;
+  exact equality/error/resource summaries still require inspection of the saved artifacts.
+- Full-retention projection exceeds the unchanged4 GiB output cap by about46 times. This is an
+  estimated future storage requirement, not184 GiB written by this small rehearsal. No multi-hour
+  workload was started, no cap increased, and no existing outputs deleted.
+- Next bounded recommendation: audit manual-rehearsal-03 and evaluate lossless deduplication on
+  already saved arrays. Store byte-identical content once with per-job references/checksums while
+  preserving all unique arrays, IDs and metadata. Confirm exact reconstruction and realistic
+  storage overhead before explicitly revising any long-run storage protocol. No new model calls
+  are needed for this diagnostic; multi-hour reliability and scientific readiness remain open.
+- Local provenance receipt: outputs/phase1/p1-023/manual-03-user-reported-summary.json.
+
+## 2026-09-24 / P1-024 / Offline rehearsal audit and lossless storage prototype
+
+- User approved auditing manual-rehearsal-03 and testing lossless deduplication using existing
+  outputs only. No model calls, new scientific choices, long-run launch or publication authorized.
+- Prediction: repeated synthetic result bundles are byte-identical, allowing exact content sharing;
+  verify rather than infer from tolerance-based rehearsal acceptance. Preserve all original data.
+- Package the25 completed evidence files with SHA hashes after checking recorded source hashes
+  on Windows. Use only standard-library packaging with a120-second remote watchdog, not a broad
+  PowerShell/provider diagnostic. Archive SHA256
+  `0a58d5b86d2be3f662452a542867fb4cc40b7b2b9be2d6615bd9af0aaf68100e`.
+- Implement an offline archive prototype: SHA-addressed complete NPZ payloads, original metadata,
+  source row checksums, arm/job/shard keys and hashed original headers. Reopen and reconstruct
+  all source records exactly. Only identical bytes share storage; numerical closeness never merges
+  records. Reject corrupt inputs/archives and existing output destinations. No execution runner
+  uses this prototype, so the new source file is not deployed to the frozen remote checkout.
+- Next: verify archive retrieval, independently audit the rehearsal, measure real size savings,
+  estimate conditional long-run capacity with explicit metadata/manifest/log overhead. A small
+  offline prototype is not validation of live atomic blob/checkpoint persistence or long-run fit.
+
+### P1-024 / Audit and lossless reconstruction measured results
+
+- Retrieved evidence archive and verified all25 files. Initial extraction accidentally used the
+  system Python, which lacked the requested tar safety-filter argument; no extraction occurred.
+  Re-ran with project Python3.12 and its data filter. Promoted the audit script to notebooks/;
+  initial formatting issues were corrected without changing audit criteria.
+- First source audit stopped because the run identity includes Windows-only ignored
+  `.ipynb_checkpoints/main-checkpoint.py`. Retrieved the entire original source snapshot and
+  checked all recorded hashes rather than skipping that file. Snapshot archive SHA256
+  `086bad434f82e8872f61fc2e2e133b13e540d7ce7eb2040cfe219e840b37c286`.
+- Independent audit-02 passed:193 attempted forwards,48 jobs/arm,24 committed pre-kill records
+  preserved,192 across-arm array comparisons exactly equal, geometry gates passed. Original
+  report SHA256 `f4cdf176500bfe897479fab8eb60cb0b18b80d80a8f9160911c8a5d81b1a018e`.
+  Fastest post-warm-up cycle about0.405 seconds reproduces22,223 cycles/arm and184.022 GiB
+  naive storage projection. No new model inference was performed.
+- Offline prototype stores96 job records but only4 distinct payload bundles. All original
+  metadata strings/payload bytes/row checksums reconstructed exactly. Six original databases
+  total89,235,456 bytes; prototype4,042,752 bytes. Original25 evidence-file hashes unchanged.
+- Proposed shared-store estimate1,543,462,248 bytes (about1.44 GiB), conditional on identical
+  repeats and the explicit metadata/global-manifest/header/log assumptions in dedup/report.json.
+  This supports investigating a lossless format, not claiming a live long-run storage pass.
+- New reusable module dedup_archive.py and notebook audit/experiment clients are local only.
+  No deployment to the frozen remote model runner, checkpoint migration, cap/tolerance change,
+  new model workload, commit or push. `REHEARSAL_STORAGE_REVIEW.md` records results and limits.
+- Final local verification passed196 tests (including six archive tests), locked/offline sync,
+  lint/format (88 files), source/test and audit-client type checks, synthetic smoke and whitespace.
+  Receipt: outputs/phase1/p1-024/verification/report.json. No fresh remote model test implied.
+- Next: a bounded-memory live blob/checkpoint protocol with crash-safety/corruption tests, then
+  a fresh short storage rehearsal before any prospective multi-hour protocol is frozen.
+
 ## Entry template
 
 - ID / date / phase / status:
@@ -819,3 +1260,90 @@ test material here.
 - Decision / next check / blockers:
 
 If a field is not applicable, say why. Link detailed metadata rather than duplicating it.
+
+## P1-025 / 2026-09-24 / Live compact storage and manual handoff preparation
+
+- User authorized implementing the live store, recovery tests and manual short-rehearsal handoff
+  now to conserve usage during later model execution. No multi-hour run or publication is included.
+- Prediction: complete byte-identical payload sharing preserves exact results across restart while
+  keeping checkpoint memory bounded by a16-job shard. Acceptance: unchanged prior row checksums,
+  recompute only uncommitted work; reject missing/corrupt blobs/metadata/identities before compute.
+- Prospective protocol: COMPACT_REHEARSAL_PROTOCOL.md. Separate --compact runner identity; same
+  fixed12-cycle193-attempt short CUDA protocol and unchanged numerical/resource/execution guards.
+  Two SQLite commits: full payload first, shard reference second. A crash between commits leaves
+  an unreferenced complete payload, never a committed reference to incomplete data.
+- Initial13 weight-free tests passed, including os._exit without cleanup at three boundaries,
+  read-only paused-worker snapshot, corruption/deleted identity and competing-writer refusal.
+  Initial type check caught optional-connection assertions missing in tests; adding explicit
+  assertions before test-only database mutations. Full verification and Windows deployment pending.
+- Original artifacts/checkpoints remain untouched. Short supervisor still collects48 rows/arm;
+  it must not be reused unmodified for multi-hour work. Long-run streaming/state/telemetry,
+  actual storage calibration, sustained memory criteria and disconnect independence remain open.
+
+### P1-025 / Verification completed; manual compact rehearsal ready
+
+- Final local verification passed209 tests, locked/offline sync, Ruff lint/format, source/test
+  and both runner type checks, synthetic smoke and whitespace. Receipt: p1-025/verification/.
+- Weight-free replay of all96 original saved rows through the live writer preserved every payload,
+  metadata value and original row checksum; source database hashes unchanged. Two separate arm
+  catalogs plus six shards total7,774,208 bytes (about7.41 MiB). This differs from P1-024's single
+  offline archive because each live arm retains its own independent catalog. No model calls.
+  Script/receipts: outputs/phase1/p1-025/replay_saved.py and saved-replay/report.json.
+- Read remote Git status; did not pull/reset/stash. Before deploying, compared every overwritten
+  file to its recorded P1-024 source-snapshot hash, refused unexpected existing new targets, and
+  backed up original bytes under remote p1-025/before/. Held the existing exclusive manual lock
+  during deployment/verification. No authentication, scheduler or unrelated operational changes.
+- Deployment archive SHA256 a3b4b858bdd14341f89e7cd17a84f76f0e1a99b8e59a6e2941cc4fe1043c05b1.
+  Windows fresh verification passed209 tests, locked/offline sync, lint/format, both type scopes
+  and synthetic smoke. Each verification child had a120-second timeout with owned-tree cleanup
+  on timeout; all exited normally. Windows formatted-file count88 vs Mac92 reflects local-only
+  audit clients, not skipped tests. Receipt: deploy-verify.stdout and remote-receipts/.
+- Windows manual launcher CheckOnly returned READY after verifying current source hashes and
+  the prior Windows atomic-publication probe. New target p1-025/manual-compact-01 has not run.
+  Hash manifest includes the existing ignored Windows notebook checkpoint rather than excluding it.
+- Reporting correction: supervisor now attaches saved worker state on failure when available,
+  avoiding the earlier null-forward-count summary when the worker had recorded its count.
+- Next user action is the one foreground command in MANUAL_COMPACT_REHEARSAL.md. Keep SSH
+  connected; return the summary and preserve failures. No multi-hour command, model inference,
+  weight download, scientific execution, commit or push occurred in this preparation.
+
+### P1-025 / Manual compact rehearsal — user-reported pass
+
+- User supplied the completed manual-compact-01 summary: rehearsal_passed, error=null,
+  forward counts96/49/48/0/0. This matches the193-attempt protocol, including zero-work replay
+  and incompatible-identity probes. Saved arrays, timing and resource logs are not freshly audited.
+- Each independent arm reports4 distinct payloads,3,699,688 payload bytes and3,739,648 catalog
+  bytes. Reported total output8,253,024 bytes (about7.87 MiB). Sharing is observed in the live
+  model-backed short run according to its supervisor, not merely the earlier offline prototype.
+- long_run_ready=false and multi_hour_ready=false are expected gates, not failure statuses.
+  The short result does not establish sustained memory stability, long-run fit or disconnection
+  survival. No rerun is needed. Preserve outputs/phase1/p1-025/manual-compact-01/report.json
+  and dependencies for the next independent audit and updated timing/storage projection.
+- This turn records the supplied summary only: no remote connection, model calls, code changes,
+  commit or push. Next: audit existing artifacts before preparing/finalizing the long protocol
+  and a tested disconnect-independent manual launcher. Documentation whitespace check passed.
+
+## P1-026 / 2026-09-25 / Compact rehearsal independently audited; timing gate
+
+- User authorized proceeding from supplied summary to saved-artifact review and long-run
+  preparation. Preserve numerical/duration/resource limits; do not start model work in this audit.
+- Retrieved saved evidence plus every declared source file using a bounded90-second standard-
+  library packaging process. All exited normally. Archive7,099,252 bytes, SHA256
+  b38834aea36c3d5ae6dc70ec991b4974dc7761b0c4bf620183845567a15af045; verified before extraction.
+- Extended audit client to compact catalog/shard layout, frozen-source specification loading,
+  zero-load probe checks and runtime resource validation. Fresh compact audit passed193 attempts,
+  48 jobs/arm,24 prior committed checksums preserved and192 exactly equal arrays. Geometry and
+  all342 worker resource samples passed. Legacy saved rehearsal also passed the revised client.
+- Initial exploratory timestamp print assumed finished_utc for the intentionally killed worker;
+  KeyError was a diagnostic-script mistake, not evidence corruption. Used reference loaded_at
+  and last_progress timestamps for the elapsed-time calculation; no missing timestamp invented.
+- Recomputed21,429 cycles/arm and conditional compact estimate1,495,860,840 bytes (1.39 GiB).
+  Reference active total5.830 seconds versus8.015 seconds after loading through final progress.
+  Direct short-run wall extrapolation14,312.8 seconds/arm exceeds10,800-second cap before loading
+  or recovery. Warm-up/one-time overhead limits precision; no claim of measured long-run failure.
+- This fails to justify freezing the current long execution plan. No cap/duration/retention
+  change, long launcher deployment, model run, remote source edit, commit or push. Review in
+  COMPACT_REHEARSAL_RESULT.md; audit and feasibility receipts under outputs/phase1/p1-026/.
+- Next: weight-free profiling of saved-result storage and monitoring/publication to identify
+  removable overhead; retain integrity and guards. New short calibration needed if runtime path
+  changes. Disconnection-independent long handoff remains pending feasibility, not silently ready.

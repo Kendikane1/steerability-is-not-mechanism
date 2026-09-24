@@ -35,6 +35,17 @@ def test_mps_selection_uses_explicit_tensor_device_ordinal(monkeypatch, requeste
     monkeypatch.setenv("PYTORCH_ENABLE_MPS_FALLBACK", "0")
     prefix = "steerability_is_not_mechanism.local_qwen."
     with ExitStack() as stack:
+        # This test simulates the Mac runtime even when the suite runs on Windows.
+        stack.enter_context(
+            patch(
+                prefix + "importlib.metadata.version",
+                side_effect={
+                    "torch": "2.13.0",
+                    "transformers": "5.15.0",
+                    "tokenizers": "0.22.2",
+                }.__getitem__,
+            )
+        )
         stack.enter_context(patch(prefix + "local_device", return_value=torch.device("mps")))
         stack.enter_context(patch("torch.backends.mps.is_available", return_value=True))
         for name in (

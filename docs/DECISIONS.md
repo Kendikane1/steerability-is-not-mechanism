@@ -337,6 +337,108 @@
 - Next recommendation is a predeclared sustained local synthetic protocol with memory/abort
   criteria and a small dry run. No scientific layer, direction or pilot choice is settled here.
 
+### P1-018 / Sustained-test planning, 2026-09-23
+
+- User approved publishing the milestone4–5 checkpoint and preparing the next bounded plan.
+- `LOCAL_SUSTAINED_TEST_PLAN.md` proposes a12-cycle rehearsal, then two sequential arms targeting
+  two active hours each, with fixed synthetic jobs, natural counterpart edits and one planned
+  interruption. Counts/resource thresholds are draft recommendations pending implementation and
+  rehearsal; this does not authorize a new long run or settle scientific choices.
+- Keep P1-016 budgets unchanged; any sustained runner needs a distinct reviewed request.
+  Freeze monitoring, manifest, limits and fault budget before execution. Sampled memory maxima
+  must not be labeled guaranteed peaks. Remote1.7B headroom remains a separate requirement.
+
+### P1-019 / Approved limits and resource refusal, 2026-09-23
+
+- User approved the proposed P1-018 limits and proceeding through completion, conditional on
+  the stated gates. This supersedes P1-018 planning-only authority, not scientific restrictions.
+- Startup requires macOS dispatch pressure1;2/4 and unknown readings refuse. Read-only sysctl
+  timeouts are2 seconds each; total sample age must be at most5 seconds. Units/parsers and all
+  threshold boundaries have weight-free tests. No missing reading is replaced by a passing value.
+- Live startup preflight refused pressure2 (warning), before importing torch or loading a model.
+  Disk passed the10 GiB startup requirement. Absolute existing swap is recorded, not mistaken
+  for post-baseline swap growth. No rehearsal or long-run conclusion follows from this refusal.
+- Full sustained runner/continuous monitor remains incomplete. Next is to restore normal host
+  pressure, then complete the runner/monitor and verification before any model-backed rehearsal.
+  Do not automatically close unrelated applications, reset swap or bypass the startup gate.
+
+### P1-020 / User-authorized warning-pressure rehearsal revision, 2026-09-23
+
+- User explicitly overrides automatic stopping at warning memory pressure for this local test.
+  Record warning readings; critical/unknown pressure still stops, as do unchanged swap, disk,
+  MPS allocation, monitoring and numerical limits. This is an explicit prospective protocol
+  revision, not a retroactive pass of P1-019 or the original normal-pressure headroom criterion.
+- Implement a distinct96-call,12-cycle rehearsal request and supervisor. Budget193 attempted
+  forwards for reference plus one interrupted/resumed comparison; replay/incompatible probes0.
+  Details and deadlines in `LOCAL_SUSTAINED_TEST_PLAN.md`, frozen before model execution.
+- Calibrate duration/storage only after rehearsal acceptance. If a remaining limit fails,
+  stop/preserve/diagnose autonomously; do not relax it or automatically enter scientific work.
+
+- Measured P1-020 outcome: revised warning-pressure startup proceeded, but the first worker
+  exceeded the unchanged256 MiB swap-growth limit during loading and was stopped before any
+  forward. Rehearsal not passed; no long-run count/arms. See `SUSTAINED_REHEARSAL_RESULT.md`.
+  Preserve current limits and diagnose competing memory demand before another attempt.
+
+### P1-021 / Read-only remote assessment, 2026-09-23
+
+- Existing remote is reachable; fresh GPU/environment/disk metadata support preparing a bounded
+  CUDA engineering check. Details and the proposed first test: `REMOTE_READINESS_REVIEW.md`.
+- Preserve dirty remote checkout; do not pull/reset it. Dependencies match the local lock;
+  separate CUDA package/device handling and an explicit remote0.6B engineering scope are needed.
+- No remote weight transfer/download, code deployment or model workload was authorized/executed
+  in this readiness check. Remote host RAM is still8 GiB; free VRAM alone cannot establish fit.
+  Scientific1.7B FP16 and pilot decisions remain open.
+
+### P1-022 / Remote engineering continuation, 2026-09-23
+
+- User authorized reconciliation, verified transfer of existing pinned0.6B artifacts, and bounded
+  synthetic CUDA checks. Preserve old remote changes in verified private backup plus Git stash;
+  remote main fast-forwarded to d1ff9bd. Reviewed local work remains uncommitted on both hosts.
+- Use distinct CUDA-only request/runtime with float32, eager attention, strict determinism and
+  IEEE matmul; keep all Mac scopes and scientific guards unchanged. See
+  `REMOTE_ENGINEERING_PROTOCOL.md` for budgets and Windows resource limits.
+- Single score passed; mechanics and short Windows process-tree interruption/resume supervisors
+  subsequently returned passed. These are short engineering checks, not multi-hour or scientific
+  results. After a transient SSH interruption, the remote artifact/checkpoint audit passed;
+  all16 resumed arrays match the uninterrupted reference exactly. See `REMOTE_ENGINEERING_RESULT.md`.
+- Windows virtual-environment launcher and worker can have different PIDs. Verify ownership and
+  terminate the owned tree; real weight-free shutdown probe and185 tests on both hosts pass.
+- Next gate: a separately scoped12-cycle CUDA rehearsal and measured
+  storage/duration feasibility. Do not run sustained work through the existing small call budgets.
+
+### P1-023 / CUDA rehearsal and manual execution, 2026-09-24
+
+- Separate12-cycle/193-attempt comparison protocol: `REMOTE_REHEARSAL_PROTOCOL.md`. Initial
+  attempt stopped on Windows progress-file replacement denial after12 recorded forwards and
+  six committed jobs. No rehearsal or storage-feasibility pass follows from that attempt.
+- Verified bounded Windows-only metadata publication retry: at most1 second, persistent errors
+  still fail. Real Windows reader-lock probe and190 tests on both hosts pass. Old checkpoints
+  remain source-bound and are not migrated. All model/resource/scientific limits unchanged.
+- For usage efficiency, user can run the prepared manual launcher without Codex supervising;
+  return its saved summary for evidence review. Manual rehearsal-02 subsequently stopped during
+  loading with0 forwards: available physical RAM336.73 MiB and load95%, while commit reserve
+  still passed. Preserve limits and inspect/reduce Windows background demand before a new attempt.
+
+### P1-023 / Manual attempt03 reported outcome
+
+- User-reported supervisor result: rehearsal passed with96/49/48/0/0 forwards; projected long-run
+  full-array storage184.022 GiB fails the unchanged4 GiB cap. Raw artifact audit remains pending.
+- Do not launch the multi-hour test under this storage plan. Next assess lossless byte-identical
+  array deduplication on saved outputs, preserving every unique array and per-job identity; this
+  is a proposal pending validation and a prospective protocol revision, not an adopted shortcut.
+
+### P1-024 / Rehearsal audited; lossless archive prototype validated
+
+- Independent saved-evidence audit passed:192 across-arm arrays exactly equal. The reported
+ 184.022 GiB naive long-run projection is reproduced; existing4 GiB cap stays unchanged.
+- Lossless full-payload sharing reconstructs96 job records exactly from4 unique bundles;
+  storage85.10 MiB becomes3.86 MiB without removing original files or result information.
+- Conditional long-run estimate1.44 GiB supports a prospective shared-bundle design. Preserve
+  every unique payload and job record; bind one complete immutable manifest by hash in shards.
+  This design is not yet a live resumable writer or a frozen long protocol. Require bounded-memory
+  operation, blob-before-commit durability, corruption/interruption tests and a fresh short
+  rehearsal before multi-hour execution. See `REHEARSAL_STORAGE_REVIEW.md`.
+
 ## Must resolve before the scientific pilot
 
 - Exact Qwen3-1.7B model/tokenizer revisions and confirmed remote 4060 type, VRAM, FP16 support,
@@ -377,3 +479,26 @@
   model-family sweeps before the core result, or Colab as required infrastructure.
 - Claims about feelings/consciousness, universal sycophancy mechanisms, uniqueness/necessity,
   frontier-model generalization, or a precise fraction mediated.
+
+### P1-025 / Live compact storage for a separately scoped short rehearsal
+
+- Adopt a per-arm SQLite payload catalog with the complete immutable identity/manifest once;
+  shard headers bind its hash and at most16 IDs. Exact byte equality alone permits sharing.
+- Catalog commit precedes shard-reference commit, with FULL synchronization and DELETE journals.
+  Preserve harmless unreferenced complete blobs after interruption; reject corruption rather
+  than repairing/migrating. Each shard is verifiable with its retained catalog dependency.
+- Keep all numerical, model and resource limits. New --compact identity separates changed
+  writer evidence from old checkpoints. Catalog3 GiB ceiling is additional to total4 GiB cap;
+  no increase in allowed output. Do not use the short supervisor's48-row collection at long scale.
+- User can run the prepared foreground short launcher without agent supervision, return its
+  summary, and stop on failure. Multi-hour calibration, streaming audit, memory-growth gate and
+  disconnect-independent launcher remain separate pending work. No multi-hour command yet.
+
+### P1-026 / Compact audit passed; long wall-time feasibility unresolved
+
+- Fresh saved-artifact audit verifies the compact short rehearsal. Conditional storage estimate
+  1.39 GiB fits4 GiB; direct measured short wall-time extrapolation is3.98 hours/arm versus the
+  approved3-hour cap. This estimate has short-run/warm-up limitations, but does not justify launch.
+- Keep the active-time minimum, wall cap and retention requirements. Profile overhead using
+  saved results before optimizing/recalibrating. Do not freeze or launch the multi-hour protocol
+  merely because compact storage passed. See COMPACT_REHEARSAL_RESULT.md.

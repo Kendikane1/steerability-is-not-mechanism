@@ -81,8 +81,10 @@ class SinglePromptAdapterCore:
         tokenizer: DecisionTokenizer,
         layout: AdapterLayout,
         device: torch.device,
+        *,
+        allow_cuda: bool = False,
     ) -> None:
-        if device.type not in {"cpu", "mps"}:
+        if device.type not in ({"cpu", "mps", "cuda"} if allow_cuda else {"cpu", "mps"}):
             raise ValueError("only local CPU/MPS devices are supported")
         if not any(module is block for module in model.modules()):
             raise ValueError("capture block must belong to the supplied model")
@@ -107,6 +109,8 @@ class SinglePromptAdapterCore:
             self._lock.release()
 
     def _check_runtime(self) -> None:
+        if self.device.type == "cuda" and torch.backends.cuda.matmul.fp32_precision != "ieee":
+            raise ValueError("CUDA requires IEEE float32 matmul")
         if torch.is_autocast_enabled(self.device.type):
             raise ValueError("automatic mixed precision is not allowed")
         if any(module.training for module in self.model.modules()):
