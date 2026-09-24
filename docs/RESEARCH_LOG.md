@@ -1347,3 +1347,56 @@ If a field is not applicable, say why. Link detailed metadata rather than duplic
 - Next: weight-free profiling of saved-result storage and monitoring/publication to identify
   removable overhead; retain integrity and guards. New short calibration needed if runtime path
   changes. Disconnection-independent long handoff remains pending feasibility, not silently ready.
+
+## P1-027 / 2026-09-25 / Publication and approved overnight revision
+
+- User requested commit/push first and approved longer overnight elapsed time, preferring no
+  further optional profiling/rehearsals. Published existing work as ca7d958 to origin/main;
+  ignored artifacts, weights and private transport details were not included.
+- Prospectively adopt6-hour cap per arm (up to12 total), retaining2-hour active minimum and
+  essential resource, integrity and failure-stop protections.193 refers to prior forward attempts,
+  not universal tests of every future experiment. No long model run started by this change.
+- Implement separate fixed21,429-cycle scope, streamed manifest/shard comparisons and bounded
+  progress state. Predict retained short-run behavior over duration; mismatches, inadequate active
+  duration, memory growth or resource limits fail. Weight-free checks of new orchestration are
+  necessary; omit optional further model rehearsal. Protocol: REMOTE_SUSTAINED_PROTOCOL.md.
+
+### P1-027 / Long-wrapper verification and scheduled handoff
+
+- Implemented separate CudaSustainedRequest,21,429-cycle streamed manifest, per-shard comparison,
+  constant-size progress state, prefix checksum recovery check and bounded RSS/CUDA-reserved
+  memory windows. Frozen manifest19,384,222 bytes SHA256
+  c00f8116f3f451e5754c3d4c24aeb76535ac5d3faf4147183e96895681bda382.
+- Existing locked Accelerate already requires psutil. An attempted offline direct-dependency add
+  could not resolve the Windows PyTorch index across all supported Python versions; no dependency/
+  lockfile change resulted. Reused the locked installed dependency and record its runtime version.
+- Initial local verification passed215 tests plus full checks. First Windows verification passed
+  214 tests but rejected the manifest hash: default text output introduced Windows CRLF. Corrected
+  the writer to explicit UTF-8/LF, preserving the frozen hash rather than accepting platform drift.
+  No model loaded. Original verification preserved; correction and new receipts under p1-027/fix01.
+- Added failure checks immediately before the intentional kill so an independently failed/stale
+  worker cannot be mislabeled as the planned interruption. Existing committed-prefix check remains.
+- Corrected Windows verification passed215 tests, locked/offline sync, lint/format, source/tests/
+  new entry-point type checks and synthetic smoke. Local post-correction manifest tests/format pass.
+- Remote Git status inspected; no pull/reset over dirty files. Deployment verified prior hashes
+  and preserved changed bytes before replacement under the shared manual lock. Existing PythonJob
+  task was Ready; its action matches the reviewed entry and current-job manifest. No task
+  registration, permissions or authentication changes. Scheduled no-model probe is the final gate.
+- Increased conditional log/journal allowance from256 MiB to1 GiB: previous1.39 GiB compact
+  estimate becomes about2.14 GiB, still conditional and below unchanged4 GiB output cap. Retain
+  all unique payloads; actual limits remain active. Long models are not run during preparation.
+
+### P1-027 / Scheduled launcher verified; manual long run ready
+
+- Launched only the15-second no-model probe through the existing PythonJob slot. The launching
+  SSH session exited; a later independent connection read passed/ticks3, task Ready and
+  LastTaskResult0. Manual CheckOnly then returned READY. This validates the scheduled entry's
+  disconnection behavior, not long-run model results or reboot recovery.
+- Previous current-job manifest preserved remotely at p1-027/previous-current-job.json. The slot
+  currently points to the completed probe; manual Start selects the real fixed sustained entry.
+  Do not use the old research start-job command to launch this test. Existing launcher lock shared.
+- Receipts: outputs/phase1/p1-027/probe-start.stdout, probe-check.stdout, fix-verify.stdout and
+  verification/report.json. Final local correction-specific6 tests/format/whitespace passed;
+  final Windows full215-test suite and all required code checks passed. No additional model calls.
+- User handoff: MANUAL_SUSTAINED_RUN.md Start/Status/Stop. Keep Windows awake; SSH may disconnect.
+  Long-run outcome is pending. No scientific execution, model download or widened resource limit.

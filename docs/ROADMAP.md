@@ -54,3 +54,10 @@ All192 saved across-arm arrays match exactly; recovery/resource checks pass. Con
 storage fits, but short-run elapsed-time extrapolation exceeds the3-hour arm cap. Profile and
 reduce measured overhead before recalibration and long-run launcher preparation. No long run
 has started. See `COMPACT_REHEARSAL_RESULT.md`.
+
+### P1-027 update — overnight revision and manual execution
+
+User approved longer duration. Separate fixed sustained runner and scheduled manual launcher
+implemented, retaining the essential automatic guards. See `REMOTE_SUSTAINED_PROTOCOL.md` and
+`MANUAL_SUSTAINED_RUN.md`. No long model execution has occurred during preparation; completion
+and long-duration resource stability remain to be established from the manual run.

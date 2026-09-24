@@ -502,3 +502,16 @@
 - Keep the active-time minimum, wall cap and retention requirements. Profile overhead using
   saved results before optimizing/recalibrating. Do not freeze or launch the multi-hour protocol
   merely because compact storage passed. See COMPACT_REHEARSAL_RESULT.md.
+
+### P1-027 / User-approved overnight timing revision
+
+- User accepts the longer elapsed time and prioritizes finishing over optional overhead profiling.
+  Supersede the3-hour arm cap with6 hours per arm, fixed21,429 cycles and2-hour active minimum.
+  Up to12 hours for both arms; allow separately bounded replay/final audit up to2 additional hours.
+- No further model rehearsal required for this step. Keep essential automatic resource, numerical,
+  checkpoint, memory-growth and liveness checks; they execute on Windows without agent supervision.
+- Separate sustained request and streaming16-job audit prevent enlarging the old96-call scope or
+  collecting all results in memory. Full JSONL manifest is precomputed/hash-frozen. No scientific
+  guards, precision, retained arrays, count or outcome criteria change after launch.
+- Use the existing idle PythonJob slot, preserving its old manifest. Verify a15-second no-model
+  scheduled entry across disconnection before advertising manual disconnect-safe execution.
